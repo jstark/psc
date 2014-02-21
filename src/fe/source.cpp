@@ -2,6 +2,7 @@
 #include "msg/message.h"
 #include <boost/any.hpp>
 #include <vector>
+#include <string>
 
 using namespace psc::fe;
 
@@ -47,7 +48,7 @@ char Source::SourceImpl::next_char()
 
 char Source::SourceImpl::current_char()
 {
-    if (_cpos == -2 || _cpos > _line.size())
+    if (_cpos == -2 || _cpos > static_cast<int>(_line.size()))
     {
         read_line();
         return next_char();
