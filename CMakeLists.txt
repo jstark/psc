@@ -12,5 +12,9 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     endif()
 endif()
 
+if (${CMAKE_SYSTEM_NAME} MATCHES Windows)
+	add_definitions("/MP")
+endif()
+
 add_subdirectory(src)
 

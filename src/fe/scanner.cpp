@@ -4,7 +4,7 @@
 
 using namespace psc::fe;
 
-class Scanner::ScannerImpl
+struct Scanner::ScannerImpl
 {
 public:
     explicit ScannerImpl(Source &&source)

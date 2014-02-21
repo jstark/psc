@@ -11,7 +11,7 @@ using boost::any;
 
 static const char *SRC_LINE_FORMAT = "%03d %s\n";
 
-void SourceMessageListener::receive_msg(const msg::Message &message)
+void SourceMessageListener::receive_msg(const Message &message)
 {
     MessageType type = message.type();
     vector<any> args = message.args();
@@ -35,7 +35,7 @@ static const char *PARSER_TOKEN_FORMAT =
 static const char *VALUE = 
 ">>>                  value=%s";
 
-void ParserMessageListener::receive_msg(const msg::Message &message)
+void ParserMessageListener::receive_msg(const Message &message)
 {
     MessageType type = message.type();
     vector<any> args = message.args();
