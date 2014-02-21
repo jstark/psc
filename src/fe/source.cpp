@@ -72,7 +72,7 @@ char Source::SourceImpl::peek_char()
         return END_OF_FILE;
     }
     int npos = _cpos + 1;
-    return npos < _line.size() ? _line[npos] : END_OF_LINE;
+    return npos < static_cast<int>(_line.size()) ? _line[npos] : END_OF_LINE;
 }
 
 // public interface
