@@ -5,12 +5,11 @@
 #include <vector>
 
 using namespace psc::pascal;
-using namespace psc::fe;
 using namespace psc::msg;
 
 int ErrorHandler::_errors = 0;
 
-void ErrorHandler::flag(const Token& tok, const ErrorCode *err, Parser *parser)
+void ErrorHandler::flag(const psc::fe::Token& tok, const ErrorCode *err, Parser *parser)
 {
     Message msg(MessageType::SyntaxError, 
             {tok.line_number(), tok.pos(), tok.lexeme(), err->text()});
