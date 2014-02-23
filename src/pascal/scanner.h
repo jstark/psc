@@ -15,6 +15,7 @@ public:
 
 private:
     fe::Token extract_token() override;
+    void skipws();
 };
 
 }}
