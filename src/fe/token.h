@@ -23,6 +23,8 @@ public:
     std::string lexeme() const { return _lexeme; }
     int line_number() const { return _lnum; }
     int pos() const { return _pos; }
+    const TokenType* type() const { return _type; }
+    boost::any value() const { return _value; }
     bool is_eof() const { return _lexeme.empty(); }
 private:
     boost::any _value;

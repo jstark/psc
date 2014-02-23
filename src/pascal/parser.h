@@ -5,6 +5,7 @@
 
 #include "fe/parser.h"
 #include "pascal/scanner.h"
+#include "pascal/error_handler.h"
 
 namespace psc { namespace pascal {
 
@@ -17,6 +18,8 @@ public:
 
     using fe::Parser<pascal::Scanner>::add;
     using fe::Parser<pascal::Scanner>::send_msg;
+private:
+    ErrorHandler _errorHandler;
 };
 
 }}
