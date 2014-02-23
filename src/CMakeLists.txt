@@ -12,13 +12,11 @@ set (FE_HDR
     ${FE_DIR}/token.h
     ${FE_DIR}/scanner.h
     ${FE_DIR}/parser.h
-    ${FE_DIR}/listeners.h
 )
 set(FE_SRC
     ${FE_DIR}/source.cpp
     ${FE_DIR}/token.cpp
     ${FE_DIR}/scanner.cpp
-    ${FE_DIR}/listeners.cpp
 )
 
 # messaging

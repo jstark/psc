@@ -1,4 +1,5 @@
 #include <boost/program_options.hpp>
+#include <boost/any.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -7,12 +8,72 @@
 #include "fe/source.h"
 #include "pascal/scanner.h"
 #include "pascal/parser.h"
-#include "fe/listeners.h"
 
 using std::string;
 using std::vector;
 using std::shared_ptr;
 using std::ifstream;
+using boost::any;
+
+using namespace psc;
+
+class SourceMessageListener : public msg::MessageListener
+{
+public:
+    void receive_msg(const msg::Message &message) override;
+};
+
+static const char *SRC_LINE_FORMAT = "%03d %s\n";
+
+void SourceMessageListener::receive_msg(const msg::Message &message)
+{
+    msg::MessageType type = message.type();
+    vector<any> args = message.args();
+    
+    if (type == msg::MessageType::SourceLine)
+    {
+        int lnum = boost::any_cast<int>(args.at(0));
+        string text = boost::any_cast<string>(args.at(1));
+        printf(SRC_LINE_FORMAT, lnum, text.c_str());
+    }
+}
+
+class ParserMessageListener final: public msg::MessageListener
+{
+public:
+    void receive_msg(const msg::Message &message) override;
+};
+
+static const char *PARSER_SUMMARY_FORMAT =
+"\n%20d source lines "
+"\n%20d syntax errors"
+"\n%20.2f seconds total parsing time.\n";
+
+static const char *PARSER_TOKEN_FORMAT =
+">>> %-15s line=%03d, pos=%2d, text=\"%s\"";
+
+static const char *VALUE =
+">>>                  value=%s";
+
+void ParserMessageListener::receive_msg(const msg::Message &message)
+{
+    msg::MessageType type = message.type();
+    vector<any> args = message.args();
+    
+    switch(type)
+    {
+        case msg::MessageType::ParserSummary:
+        {
+            int stmnt_count = boost::any_cast<int>(args.at(0));
+            int syntax_errors = boost::any_cast<int>(args.at(1));
+            double elapsed_time = boost::any_cast<double>(args.at(2));
+            printf(PARSER_SUMMARY_FORMAT, stmnt_count, syntax_errors, elapsed_time);
+        }
+            break;
+        default:
+            break;
+    }
+}
 
 namespace po = boost::program_options;
 
@@ -88,10 +149,10 @@ int main(int argc, char *argv[])
         } else 
         {
             fe::Source src(std::move(stream));
-            auto src_l = std::make_shared<fe::SourceMessageListener>();
+            auto src_l = std::make_shared<SourceMessageListener>();
             src.add(src_l);
             pascal::Parser parser(std::move(pascal::Scanner(std::move(src))));
-            auto parser_l = std::make_shared<fe::ParserMessageListener>();
+            auto parser_l = std::make_shared<ParserMessageListener>();
             parser.add(parser_l);
             parser.parse();
         }
