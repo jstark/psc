@@ -14,8 +14,6 @@ fe::Token Scanner::extract_token()
 
     // construct the next token. the current character 
     // determines the token type.
-    fe::TokenExtractor extractor;
-    token = extractor.extract(the_source());
     return token;
 }
 

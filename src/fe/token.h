@@ -34,13 +34,6 @@ private:
     const TokenType *_type{nullptr};
 };
 
-class TokenExtractor
-{
-public:
-    virtual ~TokenExtractor() {}
-    virtual Token extract(Source &s);
-};
-
 class TokenBuilder
 {
 public:

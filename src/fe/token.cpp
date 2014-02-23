@@ -5,21 +5,6 @@ using std::string;
 using namespace psc::fe;
 using boost::any;
 
-Token TokenExtractor::extract(Source &s)
-{
-    TokenBuilder builder;
-
-    auto c = s.current();
-    if (c != Source::END_OF_FILE)
-    {
-        builder.with_lexeme(string(1, c));
-    }
-    builder.at_line(s.current_line());
-    builder.at_pos(s.current_pos());
-    s.next();
-    return builder.build();
-}
-
 TokenBuilder& TokenBuilder::with_lexeme(const string &txt)
 {
     t._lexeme = txt;
