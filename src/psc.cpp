@@ -55,6 +55,8 @@ static const char *PARSER_TOKEN_FORMAT =
 static const char *VALUE =
 ">>>                  value=%s";
 
+static const int PREFIX_WIDTH = 5;
+
 void ParserMessageListener::receive_msg(const msg::Message &message)
 {
     msg::MessageType type = message.type();
@@ -68,6 +70,39 @@ void ParserMessageListener::receive_msg(const msg::Message &message)
             int syntax_errors = boost::any_cast<int>(args.at(1));
             double elapsed_time = boost::any_cast<double>(args.at(2));
             printf(PARSER_SUMMARY_FORMAT, stmnt_count, syntax_errors, elapsed_time);
+        }
+            break;
+        case msg::MessageType::Token:
+        {
+            int line = boost::any_cast<int>(args.at(0));
+            int pos = boost::any_cast<int>(args.at(1));
+            auto type = boost::any_cast<fe::TokenType *>(args.at(2));
+            string text = boost::any_cast<string>(args.at(3));
+            boost::any value = args.at(4);
+            printf(PARSER_TOKEN_FORMAT, type, line, pos, text.c_str());
+            if (!value.empty())
+            {
+                printf(VALUE, boost::any_cast<string>(value).c_str());
+            }
+        }
+            break;
+        case msg::MessageType::SyntaxError:
+        {
+            int line = boost::any_cast<int>(args.at(0));
+            int pos = boost::any_cast<int>(args.at(1));
+            string text = boost::any_cast<string>(args.at(2));
+            string errmsg = boost::any_cast<string>(args.at(3));
+            
+            int space = PREFIX_WIDTH + pos;
+            string flagBuffer(' ', space-1);
+            flagBuffer.append("^\n*** ").append(errmsg);
+            
+            // text if any of the bad token
+            if (!text.empty())
+            {
+                flagBuffer.append(" [at \"").append(text).append("\"]");
+            }
+            printf("%s\n", flagBuffer.c_str());
         }
             break;
         default:
