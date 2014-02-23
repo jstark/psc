@@ -29,5 +29,6 @@ void ErrorHandler::abort_translation(const ErrorCode *error, Parser *parser)
     string fatal = "FATAL ERROR: " + error->text();
     Message msg(MessageType::SyntaxError, {0, 0, std::string(""), fatal});
     parser->send_msg(msg);
+    std::exit(-1);
 }
 
