@@ -1,6 +1,7 @@
 #include <cctype>
 #include <locale>
 #include <algorithm>
+#include <tuple>
 #include "fe/token.h"
 #include "pascal/error.h"
 #include "pascal/scanner.h"
@@ -11,10 +12,13 @@ using namespace psc::pascal;
 
 namespace
 {
+    
+using std::string;
+using std::tuple;
 
 fe::Token word_token(fe::Source &source)
 {
-    std::string lexeme;
+    string lexeme;
     char current = source.current();
     
     int line = source.current_line();
@@ -25,11 +29,11 @@ fe::Token word_token(fe::Source &source)
     while (std::isalnum(current))
     {
         lexeme.append(1, current);
-        current = source.current();
+        current = source.next();
     }
     
     // is it a reserved word or an identifier ?
-    std::string l_text(lexeme);
+    string l_text(lexeme);
     std::transform(
         l_text.begin(),
         l_text.end(),
@@ -49,9 +53,253 @@ fe::Token word_token(fe::Source &source)
                 .build();
 }
     
+using unsigned_digits_t = tuple<const fe::TokenType *, string, boost::any, string>;
+    
+unsigned_digits_t unsigned_digits(fe::Source &source)
+{
+    char current = source.current();
+    
+    string text;
+    boost::any val;
+    string digits;
+    const fe::TokenType *type = nullptr;
+    // must have at least one digit
+    if (!std::isdigit(current))
+    {
+        type = &ERROR;
+        val  = &INVALID_NUMBER;
+    } else
+    {
+        while (std::isdigit(current))
+        {
+            text.append(1, current);
+            digits.append(1, current);
+            current = source.next(); // consume digit
+        }
+    }
+    
+    return std::make_tuple(type, text, val, digits);
+}
+    
+using int_value_t = tuple<const fe::TokenType *, int, boost::any>;
+    
+int_value_t compute_int_val(const string& digits)
+{
+    int val = 0;
+    if (!digits.empty())
+    {
+        int prev = -1;
+        int index= 0;
+        
+        // loop over the digits to compute the integer value
+        // as long as there is no overflow.
+        while (index < digits.size() && val >= prev)
+        {
+            prev = val;
+            val = 10 * val + (digits[index++] - '0');
+        }
+        
+        // no overflow: return the int value
+        if (val >= prev)
+        {
+            return std::make_tuple(&INTEGER, val, 0);
+        } else
+        {
+            return std::make_tuple(&ERROR, 0, &RANGE_INTEGER);
+        }
+    }
+    return std::make_tuple(&INTEGER, 0, 0);
+}
+    
+using real_value_t = tuple<const fe::TokenType *, double, boost::any>;
+    
+real_value_t compute_real_val(const string& whole, const string& frac,
+                              const string& expd , char sign)
+{
+    const fe::TokenType *err = nullptr;
+    boost::any _;
+    
+    int exp_val = 0;
+    std::tie(err, exp_val, _) = compute_int_val(expd);
+    if (err == &ERROR)
+    {
+        return std::make_tuple(err, 0, &INVALID_NUMBER);
+    }
+    if (sign == '-')
+    {
+        exp_val = -exp_val;
+    }
+    
+    string digits = whole;
+    if (!frac.empty())
+    {
+        exp_val -= frac.size();
+        digits.append(frac);
+    }
+    
+    // out of range check
+    int x = std::abs(exp_val + (int)whole.size());
+    if (x > std::numeric_limits<double>::max_exponent)
+    {
+        return std::make_tuple(&ERROR, 0, &RANGE_REAL);
+    }
+    
+    // loop over the digits to compute the double value
+    int index = 0;
+    double dval = 0;
+    while (index < digits.size())
+    {
+        dval = 10 * dval * digits[index++] - '0';
+    }
+    
+    // adjust due to exponent
+    if (exp_val != 0)
+    {
+        dval *= std::pow(10.0, exp_val);
+    }
+    
+    return std::make_tuple(&REAL, dval, 0);
+}
+    
 fe::Token number_token(fe::Source &source)
 {
-
+    int line = source.current_line();
+    int pos = source.current_pos();
+    std::string lexeme, whole_digits;
+    boost::any value;
+    
+    const fe::TokenType *err = nullptr;
+    std::tie(err, lexeme, value, whole_digits) = unsigned_digits(source);
+    
+    if (err == &ERROR)
+    {
+        fe::TokenBuilder builder;
+        return builder.with_type(err)
+                      .with_lexeme(lexeme)
+                      .at_pos(pos)
+                      .at_line(line)
+                      .with_value(value)
+                      .build();
+    }
+    
+    // assume int
+    const fe::TokenType *type = &INTEGER;
+    
+    // Is there a . ?
+    // It could be a decimal point or the start of a .. token
+    char current = source.current();
+    bool saw_dot_dot = false;
+    string frac_digits;
+    if (current == '.')
+    {
+        if (source.peek() == '.')
+        {
+            saw_dot_dot = true; // it's a ".." token, so don't consume it
+        } else
+        {
+            type = &REAL; // decimal point, so token type is REAL.
+            lexeme.append(1, current);
+            current = source.next(); // consume decimal point
+            
+            // collect fraction part of the number
+            err = nullptr;
+            string frac_lexeme;
+            std::tie(err, frac_lexeme, value, frac_digits) = unsigned_digits(source);
+            lexeme.append(frac_lexeme);
+            if (err == &ERROR)
+            {
+                fe::TokenBuilder builder;
+                return builder.with_type(err)
+                              .with_lexeme(lexeme)
+                              .at_pos(pos)
+                              .at_line(line)
+                              .with_value(value)
+                              .build();
+            }
+        }
+    }
+    
+    // is there an exponent part ?
+    // There cannot be an exponent if we already saw a ".." token.
+    current = source.current();
+    char exponent_sign = '+';
+    string exp_digits;
+    if (!saw_dot_dot && (current == 'E' || current == 'e'))
+    {
+        type = &REAL;
+        lexeme.append(1, current);
+        current = source.next(); // consume 'E' or 'e'
+        
+        // exponent sign ?
+        if (current == '+' || current == '-')
+        {
+            lexeme.append(1, current);
+            exponent_sign = current;
+            current = source.next();
+            
+        }
+        
+        // extract the digits of the exponent.
+        err = nullptr;
+        std::tie(err, exp_digits, value, exp_digits) = unsigned_digits(source);
+        lexeme.append(exp_digits);
+        if (err == &ERROR)
+        {
+            fe::TokenBuilder builder;
+            return builder.with_type(err)
+                          .with_lexeme(lexeme)
+                          .at_pos(pos)
+                          .at_line(line)
+                          .with_value(value)
+                          .build();
+        }
+    }
+    
+    // compute the value of an integer number token
+    if (type == &INTEGER)
+    {
+        int val = 0;
+        std::tie(err, val, value) = compute_int_val(whole_digits);
+        if (err == &ERROR)
+        {
+            fe::TokenBuilder builder;
+            return builder.with_type(err)
+                          .with_lexeme(lexeme)
+                          .at_pos(pos)
+                          .at_line(line)
+                          .with_value(value)
+                          .build();
+        } else
+        {
+            value = val;
+        }
+    } else if (type == &REAL)
+    {
+        double val = 0;
+        std::tie(err, val, value) = compute_real_val(whole_digits, frac_digits,
+                                        exp_digits, exponent_sign);
+        if (err == &ERROR)
+        {
+            fe::TokenBuilder builder;
+            return builder.with_type(err)
+                          .with_lexeme(lexeme)
+                          .at_pos(pos)
+                          .at_line(line)
+                          .with_value(value)
+                          .build();
+        } else
+        {
+            value = val;
+        }
+    }
+    
+    fe::TokenBuilder builder;
+    return builder.with_type(type)
+                  .with_lexeme(lexeme)
+                  .at_pos(pos)
+                  .at_line(line)
+                  .with_value(value)
+                  .build();
 }
     
 fe::Token string_token(fe::Source &source)

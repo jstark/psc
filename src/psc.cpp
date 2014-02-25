@@ -8,6 +8,7 @@
 #include "fe/source.h"
 #include "pascal/scanner.h"
 #include "pascal/parser.h"
+#include "pascal/token_type.h"
 
 using std::string;
 using std::vector;
@@ -50,10 +51,10 @@ static const char *PARSER_SUMMARY_FORMAT =
 "\n%20.2f seconds total parsing time.\n";
 
 static const char *PARSER_TOKEN_FORMAT =
-">>> %-15s line=%03d, pos=%2d, text=\"%s\"";
+">>> %-15s line=%03d, pos=%2d, text=\"%s\"\n";
 
 static const char *VALUE =
-">>>                  value=%s";
+">>>                  value=\"%s\"\n";
 
 static const int PREFIX_WIDTH = 5;
 
@@ -76,10 +77,10 @@ void ParserMessageListener::receive_msg(const msg::Message &message)
         {
             int line = boost::any_cast<int>(args.at(0));
             int pos = boost::any_cast<int>(args.at(1));
-            auto type = boost::any_cast<fe::TokenType *>(args.at(2));
+            auto type = boost::any_cast<const pascal::TokenType *>(args.at(2));
             string text = boost::any_cast<string>(args.at(3));
             boost::any value = args.at(4);
-            printf(PARSER_TOKEN_FORMAT, type, line, pos, text.c_str());
+            printf(PARSER_TOKEN_FORMAT, type->text().c_str(), line, pos, text.c_str());
             if (!value.empty())
             {
                 printf(VALUE, boost::any_cast<string>(value).c_str());

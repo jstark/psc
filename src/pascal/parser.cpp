@@ -22,11 +22,12 @@ void Parser::parse()
         do
         {
             token = next_token();
-            auto type = token.type();
+            auto type = (const pascal::TokenType *)token.type();
             if (type != &ERROR)
             {
                 Message msg(MessageType::Token,
                             {token.line_number(), token.pos(), type, token.lexeme(), token.value()});
+                send_msg(msg);
             } else
             {
                 _errorHandler.flag(token, boost::any_cast<ErrorCode *>(token.value()), this);
