@@ -6,6 +6,7 @@
 
 #include "msg/message.h"
 #include "fe/source.h"
+#include "utils/var.h"
 #include "pascal/scanner.h"
 #include "pascal/parser.h"
 #include "pascal/token_type.h"
@@ -14,7 +15,6 @@ using std::string;
 using std::vector;
 using std::shared_ptr;
 using std::ifstream;
-using boost::any;
 
 using namespace psc;
 
@@ -29,12 +29,12 @@ static const char *SRC_LINE_FORMAT = "%03d %s\n";
 void SourceMessageListener::receive_msg(const msg::Message &message)
 {
     msg::MessageType type = message.type();
-    vector<any> args = message.args();
+    vector<utils::var> args = message.args();
     
     if (type == msg::MessageType::SourceLine)
     {
-        int lnum = boost::any_cast<int>(args.at(0));
-        string text = boost::any_cast<string>(args.at(1));
+        int lnum = boost::get<int>(args.at(0));
+        string text = boost::get<string>(args.at(1));
         printf(SRC_LINE_FORMAT, lnum, text.c_str());
     }
 }
@@ -61,41 +61,42 @@ static const int PREFIX_WIDTH = 5;
 void ParserMessageListener::receive_msg(const msg::Message &message)
 {
     msg::MessageType type = message.type();
-    vector<any> args = message.args();
+    vector<utils::var> args = message.args();
     
     switch(type)
     {
         case msg::MessageType::ParserSummary:
         {
-            int stmnt_count = boost::any_cast<int>(args.at(0));
-            int syntax_errors = boost::any_cast<int>(args.at(1));
-            double elapsed_time = boost::any_cast<double>(args.at(2));
+            int stmnt_count = boost::get<int>(args.at(0));
+            int syntax_errors = boost::get<int>(args.at(1));
+            double elapsed_time = boost::get<double>(args.at(2));
             printf(PARSER_SUMMARY_FORMAT, stmnt_count, syntax_errors, elapsed_time);
         }
             break;
         case msg::MessageType::Token:
         {
-            int line = boost::any_cast<int>(args.at(0));
-            int pos = boost::any_cast<int>(args.at(1));
-            auto type = boost::any_cast<const pascal::TokenType *>(args.at(2));
-            string text = boost::any_cast<string>(args.at(3));
-            boost::any value = args.at(4);
+            int line = boost::get<int>(args.at(0));
+            int pos = boost::get<int>(args.at(1));
+            auto type = (const pascal::TokenType *)boost::get<const void *>(args.at(2));
+            string text = boost::get<string>(args.at(3));
+            utils::var value = args.at(4);
             printf(PARSER_TOKEN_FORMAT, type->text().c_str(), line, pos, text.c_str());
-            if (!value.empty())
+            if (value.which() != 3 || boost::get<void *>(value))
             {
-                printf(VALUE, boost::any_cast<string>(value).c_str());
+                string s = boost::apply_visitor(utils::to_str_visitor(), value);
+                printf(VALUE, s.c_str());
             }
         }
             break;
         case msg::MessageType::SyntaxError:
         {
-            int line = boost::any_cast<int>(args.at(0));
-            int pos = boost::any_cast<int>(args.at(1));
-            string text = boost::any_cast<string>(args.at(2));
-            string errmsg = boost::any_cast<string>(args.at(3));
+            int line = boost::get<int>(args.at(0));
+            int pos = boost::get<int>(args.at(1));
+            string text = boost::get<string>(args.at(2));
+            string errmsg = boost::get<string>(args.at(3));
             
             int space = PREFIX_WIDTH + pos;
-            string flagBuffer(' ', space-1);
+            string flagBuffer(space-1, ' ');
             flagBuffer.append("^\n*** ").append(errmsg);
             
             // text if any of the bad token

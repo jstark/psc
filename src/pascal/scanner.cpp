@@ -6,6 +6,7 @@
 #include "pascal/error.h"
 #include "pascal/scanner.h"
 #include "pascal/token_type.h"
+#include "utils/var.h"
 
 using namespace psc;
 using namespace psc::pascal;
@@ -53,14 +54,14 @@ fe::Token word_token(fe::Source &source)
                 .build();
 }
     
-using unsigned_digits_t = tuple<const fe::TokenType *, string, boost::any, string>;
+using unsigned_digits_t = tuple<const fe::TokenType *, string, utils::var, string>;
     
 unsigned_digits_t unsigned_digits(fe::Source &source)
 {
     char current = source.current();
     
     string text;
-    boost::any val;
+    utils::var val;
     string digits;
     const fe::TokenType *type = nullptr;
     // must have at least one digit
@@ -81,7 +82,7 @@ unsigned_digits_t unsigned_digits(fe::Source &source)
     return std::make_tuple(type, text, val, digits);
 }
     
-using int_value_t = tuple<const fe::TokenType *, int, boost::any>;
+using int_value_t = tuple<const fe::TokenType *, int, utils::var>;
     
 int_value_t compute_int_val(const string& digits)
 {
@@ -111,13 +112,13 @@ int_value_t compute_int_val(const string& digits)
     return std::make_tuple(&INTEGER, 0, 0);
 }
     
-using real_value_t = tuple<const fe::TokenType *, double, boost::any>;
+using real_value_t = tuple<const fe::TokenType *, double, utils::var>;
     
 real_value_t compute_real_val(const string& whole, const string& frac,
                               const string& expd , char sign)
 {
     const fe::TokenType *err = nullptr;
-    boost::any _;
+    utils::var _;
     
     int exp_val = 0;
     std::tie(err, exp_val, _) = compute_int_val(expd);
@@ -149,7 +150,7 @@ real_value_t compute_real_val(const string& whole, const string& frac,
     double dval = 0;
     while (index < digits.size())
     {
-        dval = 10 * dval * digits[index++] - '0';
+        dval = 10 * dval + (digits[index++] - '0');
     }
     
     // adjust due to exponent
@@ -166,7 +167,7 @@ fe::Token number_token(fe::Source &source)
     int line = source.current_line();
     int pos = source.current_pos();
     std::string lexeme, whole_digits;
-    boost::any value;
+    utils::var value;
     
     const fe::TokenType *err = nullptr;
     std::tie(err, lexeme, value, whole_digits) = unsigned_digits(source);
@@ -476,8 +477,9 @@ fe::Token Scanner::extract_token()
     {
         fe::TokenBuilder builder;
         token = builder
+                    .with_lexeme(string(1, current))
                     .with_type(&ERROR)
-                    .with_value(INVALID_CHARACTER.text())
+                    .with_value(&INVALID_CHARACTER)
                     .at_line(source.current_line())
                     .at_pos(source.current_pos())
                     .build();

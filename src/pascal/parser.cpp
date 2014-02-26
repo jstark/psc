@@ -4,6 +4,7 @@
 #include "pascal/error.h"
 #include "pascal/token_type.h"
 #include <chrono>
+#include <boost/variant.hpp>
 
 using namespace psc;
 using namespace psc::msg;
@@ -30,7 +31,7 @@ void Parser::parse()
                 send_msg(msg);
             } else
             {
-                _errorHandler.flag(token, boost::any_cast<ErrorCode *>(token.value()), this);
+                _errorHandler.flag(token, static_cast<const ErrorCode *>(boost::get<const void *>(token.value())), this);
             }
         } while (!token.is_eof());
         

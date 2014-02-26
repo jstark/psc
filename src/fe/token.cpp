@@ -3,7 +3,6 @@
 
 using std::string;
 using namespace psc::fe;
-using boost::any;
 
 TokenBuilder& TokenBuilder::with_lexeme(const string &txt)
 {
@@ -17,7 +16,7 @@ TokenBuilder& TokenBuilder::with_type(const TokenType *type)
     return *this;
 }
 
-TokenBuilder& TokenBuilder::with_value(any v)
+TokenBuilder& TokenBuilder::with_value(utils::var v)
 {
     t._value = v;
     return *this;

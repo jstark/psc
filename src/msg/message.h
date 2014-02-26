@@ -1,7 +1,7 @@
 #ifndef _PSC_MSG_MESSAGE_H_
 #define _PSC_MSG_MESSAGE_H_
 
-#include <boost/any.hpp>
+#include "utils/var.h"
 #include <vector>
 #include <memory>
 
@@ -19,14 +19,14 @@ enum class MessageType
 class Message final
 {
 public:
-    explicit Message(MessageType t, std::vector<boost::any> args)
+    explicit Message(MessageType t, std::vector<utils::var> args)
         : _type(t), _args(args) {}
 
     MessageType type() const { return _type; }
-    std::vector<boost::any> args() const { return _args; }
+    std::vector<utils::var> args() const { return _args; }
 private:
     MessageType _type;
-    std::vector<boost::any> _args;
+    std::vector<utils::var> _args;
 };
 
 class MessageListener

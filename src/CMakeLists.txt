@@ -28,6 +28,7 @@ set (MSG_HDR
 # utilities
 set (UTILS_DIR "${SRC_DIR}/utils")
 set (UTILS_HDR
+    ${UTILS_DIR}/var.h
 )
 
 # pascal
