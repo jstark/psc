@@ -16,7 +16,7 @@ TokenBuilder& TokenBuilder::with_type(const TokenType *type)
     return *this;
 }
 
-TokenBuilder& TokenBuilder::with_value(utils::var v)
+TokenBuilder& TokenBuilder::with_value(psc::utils::var v)
 {
     t._value = v;
     return *this;
