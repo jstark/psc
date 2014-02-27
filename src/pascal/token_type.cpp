@@ -8,17 +8,20 @@ std::unordered_map<std::string, const TokenType *> TokenType::reserved_words;
 std::unordered_map<std::string, const TokenType *> TokenType::special_symbols;
 
 TokenType::TokenType(const std::string& n, TokenSubtype s, int id)
-    : name(n)
+: TokenType(n, n, s, id) {}
+
+TokenType::TokenType(const std::string& n, const std::string& sym, TokenSubtype s, int id)
+: name(n), symbol(sym)
 {
     if (id == -1)
     {
         type_id = tokentype_id++;
-    } else 
+    } else
     {
         type_id = id;
     }
-
-    std::string lname = n;
+    
+    std::string lname = sym;
     std::transform(lname.begin(), lname.end(), lname.begin(), ::tolower);
     if (s == TokenSubtype::Reserved)
     {
@@ -68,7 +71,7 @@ namespace psc { namespace pascal {
 }}
 
 #define DEFINE_SPECIAL_TOKENTYPE(name, sym) \
-    const TokenType name { sym, TokenSubtype::Special };
+    const TokenType name { #name, sym, TokenSubtype::Special };
 
 namespace psc { namespace pascal { 
 #define X DEFINE_SPECIAL_TOKENTYPE

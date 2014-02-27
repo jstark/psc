@@ -18,6 +18,7 @@ class TokenType : public fe::TokenType
 {
 public:
     TokenType(const std::string& name, TokenSubtype subtype, int id = -1);
+    TokenType(const std::string& name, const std::string& sym, TokenSubtype subtype, int id = -1);
     std::string text() const { return name; }
 
     static const TokenType* reserved_word_type(const std::string& key);
@@ -25,6 +26,7 @@ public:
     static bool is_special_symbol(const std::string& key);
 private:
     std::string name;
+    std::string symbol;
     int type_id;
 
     static std::unordered_map<std::string, const TokenType *> reserved_words;
