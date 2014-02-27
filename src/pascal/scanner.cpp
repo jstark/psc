@@ -27,7 +27,7 @@ fe::Token word_token(fe::Source &source)
     
     // Get the word characters (letter or digit). The scanner has already
     // determined that the first character is a letter.
-    while (std::isalnum(current))
+    while (std::isalnum(current) || current == '_')
     {
         lexeme.append(1, current);
         current = source.next();
