@@ -19,7 +19,7 @@ std::tuple<im::ICode*, im::SymbolTableStack*> Parser::parse()
 {
     fe::Token token;
     auto start = std::chrono::system_clock::now();
-	im::SymbolTableStack *symtabStack = im::SymbolTableFactory::make_stack();
+	auto symtabStack = im::SymbolTableFactory::make_stack();
     try
     {
         do
@@ -40,7 +40,7 @@ std::tuple<im::ICode*, im::SymbolTableStack*> Parser::parse()
 					entry = symtabStack->enter_local(name);
 				}
 				entry->append_line(token.line_number());
-            } else
+            } else if (type == &ERROR)
             {
                 _errorHandler.flag(token, static_cast<const ErrorCode *>(boost::get<const void *>(token.value())), this);
             }

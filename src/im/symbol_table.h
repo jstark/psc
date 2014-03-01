@@ -28,6 +28,7 @@ class SymbolTableEntry;
 class SymbolTableStack final
 {
 public:
+    SymbolTableStack();
 	~SymbolTableStack();
 
 	/* the current nesting level */
@@ -122,7 +123,7 @@ class SymbolTableFactory final
 public:
 	SymbolTableFactory() = delete;
 
-	static SymbolTableStack* make_stack();
+	static std::unique_ptr<SymbolTableStack> make_stack();
 	static SymbolTable* make_table(int level);
 	static SymbolTableEntry* make_entry(const std::string& name, SymbolTable *table);
 };

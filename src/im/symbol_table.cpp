@@ -7,6 +7,10 @@ using namespace psc::im;
 ///////////////////////////////////////////////////////////////////////////////
 struct SymbolTableStack::SymbolTableStackImpl
 {
+    SymbolTableStackImpl()
+    {
+        tables.push_back(SymbolTableFactory::make_table(0));
+    }
 	boost::optional<SymbolTableEntry *> lookup_local(const std::string &name) const;
 	boost::optional<SymbolTableEntry *> lookup(const std::string &name) const;
 
@@ -15,6 +19,9 @@ struct SymbolTableStack::SymbolTableStackImpl
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+SymbolTableStack::SymbolTableStack()
+: pimpl(new SymbolTableStack::SymbolTableStackImpl()) {}
+    
 SymbolTableStack::~SymbolTableStack() {}
 
 int SymbolTableStack::current_nesting_level() const
@@ -96,7 +103,7 @@ std::vector<SymbolTableEntry*> SymbolTable::sorted_entries() const
 struct SymbolTableEntry::SymbolTableEntryImpl
 {
 	SymbolTableEntryImpl(const std::string& n, SymbolTable *tb)
-	: name(n), table(tb) {}
+	: table(tb), name(n) {}
 	SymbolTable *table{ nullptr };
 	std::string name;
 	std::vector<int> line_numbers;
@@ -141,9 +148,10 @@ SymbolTableKeyValue SymbolTableEntry::attribute(SymbolTableKey key)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-SymbolTableStack* SymbolTableFactory::make_stack()
+std::unique_ptr<SymbolTableStack> SymbolTableFactory::make_stack()
 {
-	return new SymbolTableStack;
+    std::unique_ptr<SymbolTableStack> ptr(new SymbolTableStack);
+	return ptr;
 }
 
 SymbolTable* SymbolTableFactory::make_table(int level)
