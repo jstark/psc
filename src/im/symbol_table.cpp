@@ -148,10 +148,9 @@ SymbolTableKeyValue SymbolTableEntry::attribute(SymbolTableKey key)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-std::unique_ptr<SymbolTableStack> SymbolTableFactory::make_stack()
+SymbolTableStack* SymbolTableFactory::make_stack()
 {
-    std::unique_ptr<SymbolTableStack> ptr(new SymbolTableStack);
-	return ptr;
+    return new SymbolTableStack;
 }
 
 SymbolTable* SymbolTableFactory::make_table(int level)

@@ -123,7 +123,7 @@ class SymbolTableFactory final
 public:
 	SymbolTableFactory() = delete;
 
-	static std::unique_ptr<SymbolTableStack> make_stack();
+	static SymbolTableStack* make_stack();
 	static SymbolTable* make_table(int level);
 	static SymbolTableEntry* make_entry(const std::string& name, SymbolTable *table);
 };
