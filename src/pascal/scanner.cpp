@@ -94,7 +94,7 @@ int_value_t compute_int_val(const string& digits)
         
         // loop over the digits to compute the integer value
         // as long as there is no overflow.
-        while (index < digits.size() && val >= prev)
+        while (index < static_cast<int>(digits.size()) && val >= prev)
         {
             prev = val;
             val = 10 * val + (digits[index++] - '0');
@@ -148,7 +148,7 @@ real_value_t compute_real_val(const string& whole, const string& frac,
     // loop over the digits to compute the double value
     int index = 0;
     double dval = 0;
-    while (index < digits.size())
+    while (index < static_cast<int>(digits.size()))
     {
         dval = 10 * dval + (digits[index++] - '0');
     }
