@@ -19,6 +19,17 @@ set(FE_SRC
     ${FE_DIR}/scanner.cpp
 )
 
+# im
+set (IM_DIR "${SRC_DIR}/im")
+set (IM_HDR
+	${IM_DIR}/symbol_table.h
+	${IM_DIR}/icode.h
+	${IM_DIR}/xref.h
+)
+set(IM_SRC
+	${IM_DIR}/symbol_table.cpp
+	${IM_DIR}/xref.cpp
+)
 # messaging
 set (MSG_DIR "${SRC_DIR}/msg")
 set (MSG_HDR
@@ -50,6 +61,7 @@ set (PA_SRC
 
 set(HEADERS
     ${FE_HDR}
+	${IM_HDR}
     ${MSG_HDR}
     ${PA_HDR}
     ${UTILS_HDR}
@@ -58,6 +70,7 @@ set(HEADERS
 set(SOURCES
     psc.cpp
     ${FE_SRC}
+	${IM_SRC}
     ${PA_SRC}
 )
 

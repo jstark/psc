@@ -7,13 +7,20 @@
 #include "pascal/scanner.h"
 #include "pascal/error_handler.h"
 
-namespace psc { namespace pascal {
+namespace psc { 
+
+namespace im {
+	class ICode;
+	class SymbolTableStack;
+}
+
+namespace pascal {
 
 class Parser final : fe::Parser<pascal::Scanner>
 {
 public:
     explicit Parser(pascal::Scanner &&scanner);
-    void parse() override;
+    std::tuple<im::ICode*, im::SymbolTableStack*> parse() override;
     int error_count() const override;
 
     using fe::Parser<pascal::Scanner>::add;

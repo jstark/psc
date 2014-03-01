@@ -6,6 +6,9 @@
 
 #include "msg/message.h"
 #include "fe/source.h"
+#include "im/symbol_table.h"
+#include "im/icode.h"
+#include "im/xref.h"
 #include "utils/var.h"
 #include "pascal/scanner.h"
 #include "pascal/parser.h"
@@ -185,13 +188,20 @@ int main(int argc, char *argv[])
             std::cout << "Invalid file!" << std::endl;
         } else 
         {
+			im::ICode *icode = nullptr;
+			im::SymbolTableStack *symtabstack = nullptr;
             fe::Source src(std::move(stream));
             auto src_l = std::make_shared<SourceMessageListener>();
             src.add(src_l);
             pascal::Parser parser(std::move(pascal::Scanner(std::move(src))));
             auto parser_l = std::make_shared<ParserMessageListener>();
             parser.add(parser_l);
-            parser.parse();
+            std::tie(icode, symtabstack) = parser.parse();
+			if (xref)
+			{
+				im::CrossReferencer xr;
+				xr.print(symtabstack);
+			}
         }
     } 
     catch(...)

@@ -2,8 +2,17 @@
 #define _PSC_FE_PARSER_HPP_ 
 
 #include "msg/message.h"
+#include <tuple>
 
-namespace psc { namespace fe {
+namespace psc { 
+
+// forward decl
+namespace im {
+	class SymbolTableStack;
+	class ICode;
+}
+
+namespace fe {
 
 class Token;
 
@@ -15,7 +24,7 @@ public:
     explicit Parser(scanner_type &&scanner)
         : _scanner(std::move(scanner)) {}
 
-    virtual void parse() = 0;
+    virtual std::tuple<im::ICode*, im::SymbolTableStack*> parse() = 0;
     virtual int error_count() const = 0;
 
     Token current_token() { return _scanner.current(); }
@@ -25,7 +34,7 @@ public:
     using msg::MessageProducer::send_msg;
 
 private:
-    scanner_type _scanner;
+	scanner_type _scanner;
 };
 
 }}

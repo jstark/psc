@@ -1,10 +1,12 @@
 #include "fe/token.h"
+#include "im/symbol_table.h"
 #include "msg/message.h"
 #include "pascal/parser.h"
 #include "pascal/error.h"
 #include "pascal/token_type.h"
 #include <chrono>
 #include <boost/variant.hpp>
+#include <boost/optional.hpp>
 
 using namespace psc;
 using namespace psc::msg;
@@ -13,22 +15,31 @@ using namespace psc::pascal;
 Parser::Parser(pascal::Scanner &&scanner)
     : fe::Parser<pascal::Scanner>(std::move(scanner)) {}
 
-void Parser::parse()
+std::tuple<im::ICode*, im::SymbolTableStack*> Parser::parse()
 {
     fe::Token token;
     auto start = std::chrono::system_clock::now();
-    
+	im::SymbolTableStack *symtabStack = im::SymbolTableFactory::make_stack();
     try
     {
         do
         {
             token = next_token();
             auto type = (const pascal::TokenType *)token.type();
-            if (type != &ERROR)
+            if (type == &IDENTIFIER)
             {
-                Message msg(MessageType::Token,
-                            {token.line_number(), token.pos(), type, token.lexeme(), token.value()});
-                send_msg(msg);
+				std::string name = token.lexeme();
+				std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+				// If it's not already in the symbol table,
+				// create and anter a new entry for the identifier.
+				auto opt_entry = symtabStack->lookup(name);
+				im::SymbolTableEntry *entry = opt_entry.get_value_or(nullptr);
+				if (!entry)
+				{
+					entry = symtabStack->enter_local(name);
+				}
+				entry->append_line(token.line_number());
             } else
             {
                 _errorHandler.flag(token, static_cast<const ErrorCode *>(boost::get<const void *>(token.value())), this);
@@ -44,6 +55,7 @@ void Parser::parse()
     {
         _errorHandler.abort_translation(&IO_ERROR, this);
     }
+	return std::make_tuple(nullptr, symtabStack);
 }
 
 int Parser::error_count() const
