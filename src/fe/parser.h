@@ -3,6 +3,7 @@
 
 #include "msg/message.h"
 #include <tuple>
+#include <memory>
 
 namespace psc { 
 
@@ -24,7 +25,7 @@ public:
     explicit Parser(scanner_type &&scanner)
         : _scanner(std::move(scanner)) {}
 
-    virtual std::tuple<im::ICode*, im::SymbolTableStack*> parse() = 0;
+    virtual std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> parse() = 0;
     virtual int error_count() const = 0;
 
     Token current_token() { return _scanner.current(); }

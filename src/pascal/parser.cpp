@@ -15,7 +15,7 @@ using namespace psc::pascal;
 Parser::Parser(pascal::Scanner &&scanner)
     : fe::Parser<pascal::Scanner>(std::move(scanner)) {}
 
-std::tuple<im::ICode*, im::SymbolTableStack*> Parser::parse()
+std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
 {
     fe::Token token;
     auto start = std::chrono::system_clock::now();
@@ -55,7 +55,7 @@ std::tuple<im::ICode*, im::SymbolTableStack*> Parser::parse()
     {
         _errorHandler.abort_translation(&IO_ERROR, this);
     }
-	return std::make_tuple(nullptr, symtabStack);
+	return std::make_tuple(nullptr, std::move(symtabStack));
 }
 
 int Parser::error_count() const

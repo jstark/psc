@@ -22,7 +22,13 @@ struct SymbolTableStack::SymbolTableStackImpl
 SymbolTableStack::SymbolTableStack()
 : pimpl(new SymbolTableStack::SymbolTableStackImpl()) {}
     
-SymbolTableStack::~SymbolTableStack() {}
+SymbolTableStack::~SymbolTableStack()
+{
+    std::for_each(
+        pimpl->tables.begin(),
+        pimpl->tables.end(),
+        [](SymbolTable *p) { delete p;});
+}
 
 int SymbolTableStack::current_nesting_level() const
 {
@@ -64,7 +70,14 @@ struct SymbolTable::SymbolTableImpl
 SymbolTable::SymbolTable(int level)
 : pimpl(new SymbolTable::SymbolTableImpl(level)) {}
 
-SymbolTable::~SymbolTable(){}
+SymbolTable::~SymbolTable()
+{
+    using entry_t = std::pair<const std::string, SymbolTableEntry *>;
+    std::for_each(
+        pimpl->entries.begin(),
+        pimpl->entries.end(),
+        [](entry_t p) { delete p.second; });
+}
 
 int SymbolTable::nesting_level() const
 {
@@ -148,9 +161,10 @@ SymbolTableKeyValue SymbolTableEntry::attribute(SymbolTableKey key)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-SymbolTableStack* SymbolTableFactory::make_stack()
+std::unique_ptr<SymbolTableStack> SymbolTableFactory::make_stack()
 {
-    return new SymbolTableStack;
+    std::unique_ptr<SymbolTableStack> us(new SymbolTableStack);
+    return us;
 }
 
 SymbolTable* SymbolTableFactory::make_table(int level)

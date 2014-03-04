@@ -17,6 +17,7 @@
 using std::string;
 using std::vector;
 using std::shared_ptr;
+using std::unique_ptr;
 using std::ifstream;
 
 using namespace psc;
@@ -189,7 +190,7 @@ int main(int argc, char *argv[])
         } else 
         {
 			im::ICode *icode = nullptr;
-			im::SymbolTableStack *symtabstack = nullptr;
+			unique_ptr<im::SymbolTableStack> symtabstack;
             fe::Source src(std::move(stream));
             auto src_l = std::make_shared<SourceMessageListener>();
             src.add(src_l);
@@ -200,7 +201,7 @@ int main(int argc, char *argv[])
 			if (xref)
 			{
 				im::CrossReferencer xr;
-				xr.print(symtabstack);
+				xr.print(symtabstack.get());
 			}
         }
     } 

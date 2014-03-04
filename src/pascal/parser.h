@@ -20,7 +20,7 @@ class Parser final : fe::Parser<pascal::Scanner>
 {
 public:
     explicit Parser(pascal::Scanner &&scanner);
-    std::tuple<im::ICode*, im::SymbolTableStack*> parse() override;
+    std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> parse() override;
     int error_count() const override;
 
     using fe::Parser<pascal::Scanner>::add;
