@@ -28,6 +28,7 @@ set (IM_HDR
 )
 set(IM_SRC
 	${IM_DIR}/symbol_table.cpp
+	${IM_DIR}/icode.cpp
 	${IM_DIR}/xref.cpp
 )
 # messaging
