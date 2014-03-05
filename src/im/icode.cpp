@@ -35,7 +35,7 @@ struct ICodeNode::ICodeNodeImpl
     ICodeNodeType type;
     ICodeNode *parent {nullptr};
     std::vector<ICodeNode *> children;
-    std::map<ICodeKey, utils::var> attributes;
+    std::map<ICodeKey, ICodeNodeAttrValue> attributes;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,20 +66,28 @@ std::vector<ICodeNode *> ICodeNode::children() const
     return pimpl->children;
 }
 
-void ICodeNode::setAttribute(ICodeKey key, utils::var value)
+void ICodeNode::setAttribute(ICodeKey key, ICodeNodeAttrValue value)
 {
     pimpl->attributes[key] = value;
 }
 
-boost::optional<psc::utils::var> ICodeNode::attribute(ICodeKey key) const
+boost::optional<ICodeNodeAttrValue> ICodeNode::attribute(ICodeKey key) const
 {
-    boost::optional<psc::utils::var> result;
+    boost::optional<ICodeNodeAttrValue> result;
     auto search = pimpl->attributes.find(key);
     if (search != pimpl->attributes.end())
     {
         result = search->second;
     }
     return result;
+}
+
+void ICodeNode::foreach_attribute(std::function<void (ICodeKey, ICodeNodeAttrValue)> f)
+{
+    for(const auto& p : pimpl->attributes)
+    {
+        f(p.first, p.second);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

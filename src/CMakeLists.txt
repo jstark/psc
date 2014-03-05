@@ -22,14 +22,17 @@ set(FE_SRC
 # im
 set (IM_DIR "${SRC_DIR}/im")
 set (IM_HDR
-	${IM_DIR}/symbol_table.h
-	${IM_DIR}/icode.h
-	${IM_DIR}/xref.h
+    ${IM_DIR}/common.h  
+	  ${IM_DIR}/symbol_table.h
+	  ${IM_DIR}/icode.h
+	  ${IM_DIR}/xref.h
+    ${IM_DIR}/parse_tree_printer.h
 )
 set(IM_SRC
-	${IM_DIR}/symbol_table.cpp
-	${IM_DIR}/icode.cpp
-	${IM_DIR}/xref.cpp
+	  ${IM_DIR}/symbol_table.cpp
+	  ${IM_DIR}/icode.cpp
+	  ${IM_DIR}/xref.cpp
+    ${IM_DIR}/parse_tree_printer.cpp
 )
 # messaging
 set (MSG_DIR "${SRC_DIR}/msg")
@@ -62,7 +65,7 @@ set (PA_SRC
 
 set(HEADERS
     ${FE_HDR}
-	${IM_HDR}
+	  ${IM_HDR}
     ${MSG_HDR}
     ${PA_HDR}
     ${UTILS_HDR}
@@ -71,7 +74,7 @@ set(HEADERS
 set(SOURCES
     psc.cpp
     ${FE_SRC}
-	${IM_SRC}
+	  ${IM_SRC}
     ${PA_SRC}
 )
 

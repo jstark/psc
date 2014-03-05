@@ -3,8 +3,9 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 #include <boost/optional.hpp>
-#include "utils/var.h"
+#include "im/common.h"
 
 namespace psc {
 namespace im {
@@ -77,12 +78,17 @@ public:
     /*
      * Set an attribute for this node.
      */
-    void setAttribute(ICodeKey key, utils::var value);
+    void setAttribute(ICodeKey key, ICodeNodeAttrValue value);
     
     /*
      * Get an attribute for a given key.
      */
-    boost::optional<utils::var> attribute(ICodeKey key) const;
+    boost::optional<ICodeNodeAttrValue> attribute(ICodeKey key) const;
+    
+    /*
+     * Run a function f for each attribute in this node.
+     */
+    void foreach_attribute(std::function<void(ICodeKey, ICodeNodeAttrValue)> f);
 private:
     struct ICodeNodeImpl;
     std::unique_ptr<ICodeNodeImpl> pimpl;
