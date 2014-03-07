@@ -18,7 +18,7 @@ namespace fe {
 class Token;
 
 template<typename S>
-class Parser : msg::MessageProducer
+class Parser : public msg::MessageProducer
 {
 public:
     typedef S scanner_type;
@@ -30,10 +30,6 @@ public:
 
     Token current_token() { return _scanner.current(); }
     Token next_token() { return _scanner.next(); }
-
-    using msg::MessageProducer::add;
-    using msg::MessageProducer::send_msg;
-
 private:
 	scanner_type _scanner;
 };
