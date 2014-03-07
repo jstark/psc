@@ -25,8 +25,6 @@ public:
 
     using fe::Parser<pascal::Scanner>::add;
     using fe::Parser<pascal::Scanner>::send_msg;
-private:
-    ErrorHandler _errorHandler;
 };
 
 }}

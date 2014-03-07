@@ -42,7 +42,7 @@ std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
 				entry->append_line(token.line_number());
             } else if (type == &ERROR)
             {
-                _errorHandler.flag(token, static_cast<const ErrorCode *>(boost::get<const void *>(token.value())), this);
+                ErrorHandler::flag(token, static_cast<const ErrorCode *>(boost::get<const void *>(token.value())), this);
             }
         } while (!token.is_eof());
         
@@ -53,13 +53,13 @@ std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
         send_msg(msg);
     } catch (...)
     {
-        _errorHandler.abort_translation(&IO_ERROR, this);
+        ErrorHandler::abort_translation(&IO_ERROR, this);
     }
 	return std::make_tuple(nullptr, std::move(symtabStack));
 }
 
 int Parser::error_count() const
 {
-    return _errorHandler.error_count();
+    return ErrorHandler::error_count();
 }
 
