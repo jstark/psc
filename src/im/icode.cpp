@@ -34,7 +34,7 @@ struct ICodeNode::ICodeNodeImpl
     
     ICodeNodeType type;
     ICodeNode *parent {nullptr};
-    std::vector<ICodeNode *> children;
+    std::vector<std::unique_ptr<ICodeNode>> children;
     std::map<ICodeKey, ICodeNodeAttrValue> attributes;
 };
 
@@ -54,16 +54,22 @@ ICodeNode* ICodeNode::parent()
     return pimpl->parent;
 }
 
-ICodeNode* ICodeNode::add_child(ICodeNode *node)
+ICodeNode* ICodeNode::add_child(std::unique_ptr<ICodeNode> node)
 {
-    pimpl->children.push_back(node);
+    pimpl->children.push_back(std::move(node));
     node->pimpl->parent = this;
-    return node;
+    return node.get();
 }
 
 std::vector<ICodeNode *> ICodeNode::children() const
 {
-    return pimpl->children;
+    std::vector<ICodeNode *> vec;
+    std::for_each(pimpl->children.begin(),
+                  pimpl->children.end(),
+                  [&](std::unique_ptr<ICodeNode> &node) {
+                      vec.push_back(node.get());
+                  });
+    return vec;
 }
 
 void ICodeNode::setAttribute(ICodeKey key, ICodeNodeAttrValue value)

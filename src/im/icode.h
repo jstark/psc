@@ -68,7 +68,7 @@ public:
     /*
      * Add a child node and return that node.
      */
-    ICodeNode* add_child(ICodeNode *node);
+    ICodeNode* add_child(std::unique_ptr<ICodeNode> node);
     
     /*
      * Get the node's children.
