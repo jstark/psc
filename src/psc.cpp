@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
 {
     string config_file;
     bool xref = false;
+    bool syntax_only = false;
 
     // command-line only options
     po::options_description generic("Generic options");
@@ -129,7 +130,8 @@ int main(int argc, char *argv[])
         ("version,v", "prints the compiler's version")
         ("help,h", "produces this help message")
         ("config,c", po::value<string>(&config_file)->default_value("psc.cfg"),
-         "name of the compiler's config file");
+         "name of the compiler's config file")
+        ("syntax-only,s", po::bool_switch(&syntax_only)->default_value(false), "perform only a syntax check");
 
     // options both in the command-line AND in the config file
     po::options_description config("Configuration");
