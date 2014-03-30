@@ -8,8 +8,8 @@ using namespace psc::fe;
 
 struct Source::SourceImpl final
 {
-    SourceImpl(std::ifstream &&reader, const Source &back)
-        : _reader(std::move(reader)), _back(back) {}
+    SourceImpl(std::ifstream &&reader, const msg::MessageProducer &mp)
+        : _reader(std::move(reader)), _mp(mp) {}
 
     ~SourceImpl() {}
 
@@ -23,7 +23,7 @@ struct Source::SourceImpl final
     char next_char();
     char current_char();
 
-    const Source &_back;
+    const msg::MessageProducer &_mp;
 };
 
 void Source::SourceImpl::read_line()
@@ -36,7 +36,7 @@ void Source::SourceImpl::read_line()
     {
         ++_lnum;
         Message msg(MessageType::SourceLine, {_lnum, _line});
-        _back.send_msg(msg);
+        _mp.send_msg(msg);
     }
 }
 
@@ -77,8 +77,8 @@ char Source::SourceImpl::peek_char()
 
 // public interface
 
-Source::Source(std::ifstream && reader)
-    : _pimpl(new SourceImpl(std::move(reader), *this)) {}
+Source::Source(std::ifstream && reader, const msg::MessageProducer &mp)
+    : _pimpl(new SourceImpl(std::move(reader), mp)) {}
 
 Source::~Source() {}
 

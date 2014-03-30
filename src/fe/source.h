@@ -3,15 +3,16 @@
 
 #include <fstream>
 #include <memory>
+#include "utils/fwd.h"
 
-#include "msg/message.h"
+FWD_DECL_NS_NS_CL(psc, msg, MessageProducer)
 
 namespace psc { namespace fe {
 
-class Source final : private msg::MessageProducer
+class Source final
 {
 public:
-    explicit Source(std::ifstream &&reader);
+    explicit Source(std::ifstream &&reader, const psc::msg::MessageProducer &mp);
     ~Source();
     Source(Source &&rhs);
 
@@ -25,9 +26,6 @@ public:
     static constexpr char END_OF_FILE = '\0';
     static constexpr char END_OF_LINE = '\n';
 
-    // message interface
-    using msg::MessageProducer::add;
-    using msg::MessageProducer::send_msg;
 private:
     struct SourceImpl;
     std::unique_ptr<SourceImpl> _pimpl;
