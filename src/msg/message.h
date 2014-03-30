@@ -43,25 +43,21 @@ using std::vector;
 class MessageProducer
 {
 public:
-    void add(shared_ptr<MessageListener> listener)
+    void add(MessageListener* listener)
     {
-        _listeners.emplace_back(listener);
+        _listeners.push_back(listener);
     }
 
     void send_msg(const Message& msg) const
     {
-        for (const auto &ml : _listeners)
+        for (auto ml : _listeners)
         {
-            auto locked_ml = ml.lock();
-            if (locked_ml)
-            {
-                locked_ml->receive_msg(msg);
-            }
+            ml->receive_msg(msg);
         }
     }
 
 private:
-    vector<weak_ptr<MessageListener>> _listeners;
+    vector<MessageListener*> _listeners;
 };
 
 }}
