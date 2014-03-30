@@ -12,8 +12,8 @@ using namespace psc;
 using namespace psc::msg;
 using namespace psc::pascal;
 
-Parser::Parser(pascal::Scanner &&scanner)
-    : fe::Parser<pascal::Scanner>(std::move(scanner)) {}
+Parser::Parser(pascal::Scanner &&scanner, msg::MessageProducer &mp)
+    : fe::Parser<pascal::Scanner>(std::move(scanner), mp) {}
 
 std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
 {
@@ -42,7 +42,7 @@ std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
 				entry->append_line(token.line_number());
             } else if (type == &ERROR)
             {
-                ErrorHandler::flag(token, static_cast<const ErrorCode *>(boost::get<const void *>(token.value())), this);
+                ErrorHandler::flag(token, static_cast<const ErrorCode *>(boost::get<const void *>(token.value())), _mp);
             }
         } while (!token.is_eof());
         
@@ -50,10 +50,10 @@ std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
         std::chrono::duration<double> elapsed = end - start;
         
         Message msg(MessageType::ParserSummary, {token.line_number(), error_count(), elapsed.count()});
-        send_msg(msg);
+        _mp.send_msg(msg);
     } catch (...)
     {
-        ErrorHandler::abort_translation(&IO_ERROR, this);
+        ErrorHandler::abort_translation(&IO_ERROR, _mp);
     }
 	return std::make_tuple(nullptr, std::move(symtabStack));
 }

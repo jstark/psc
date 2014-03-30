@@ -191,12 +191,20 @@ int main(int argc, char *argv[])
         {
 			im::ICode *icode = nullptr;
 			unique_ptr<im::SymbolTableStack> symtabstack;
-            fe::Source src(std::move(stream));
-            auto src_l = std::make_shared<SourceMessageListener>();
-            src.add(src_l);
-            pascal::Parser parser(std::move(pascal::Scanner(std::move(src))));
-            auto parser_l = std::make_shared<ParserMessageListener>();
-            parser.add(parser_l);
+
+            // ready source
+            SourceMessageListener sml;
+            psc::msg::MessageProducer smp;
+            smp.add(&sml);
+            fe::Source src(std::move(stream), smp);
+
+            // ready scanner and parser
+            ParserMessageListener pml;
+            psc::msg::MessageProducer pmp;
+            pmp.add(&pml);
+            pascal::Parser parser(std::move(pascal::Scanner(std::move(src))), pmp);
+
+            // do work
             std::tie(icode, symtabstack) = parser.parse();
 			if (xref)
 			{

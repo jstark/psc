@@ -9,11 +9,11 @@ namespace psc { namespace pascal {
 class ErrorCode;
 class Parser;
 
-class ErrorHandler 
+class ErrorHandler final
 {
 public:
-    static void flag(const fe::Token &token, const ErrorCode *err, msg::MessageProducer *mp);
-    static void abort_translation(const ErrorCode *error, msg::MessageProducer *mp);
+    static void flag(const fe::Token &token, const ErrorCode *err, const msg::MessageProducer &mp);
+    static void abort_translation(const ErrorCode *error, const msg::MessageProducer &mp);
     static int error_count() { return _errors; }
 private:
     static const int MAX_ERRORS = 25;
