@@ -5,6 +5,7 @@
 #include <string>
 
 using namespace psc::fe;
+using namespace psc::msg;
 
 struct Source::SourceImpl final
 {
@@ -77,7 +78,7 @@ char Source::SourceImpl::peek_char()
 
 // public interface
 
-Source::Source(std::ifstream && reader, const msg::MessageProducer &mp)
+Source::Source(std::ifstream && reader, const MessageProducer &mp)
     : _pimpl(new SourceImpl(std::move(reader), mp)) {}
 
 Source::~Source() {}

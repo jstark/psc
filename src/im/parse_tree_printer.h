@@ -2,6 +2,7 @@
 #define PSC_IM_PARSETREEPRINTER_H_
 
 #include <ostream>
+#include <memory>
 
 namespace psc { namespace im {
  
