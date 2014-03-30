@@ -2,4 +2,5 @@ build/
 xcode*
 *~
 *.swp
+*.user
 
