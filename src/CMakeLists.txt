@@ -44,6 +44,7 @@ set (MSG_HDR
 set (UTILS_DIR "${SRC_DIR}/utils")
 set (UTILS_HDR
     ${UTILS_DIR}/var.h
+    ${UTILS_DIR}/fwd.h
 )
 
 # pascal
