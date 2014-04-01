@@ -55,6 +55,9 @@ set (PA_HDR
     ${PA_DIR}/error.h
     ${PA_DIR}/error_handler.h
     ${PA_DIR}/token_type.h
+	${PA_DIR}/stmnt_parser.h
+	${PA_DIR}/nt_parser.h
+	${PA_DIR}/compound_parser.h
 )
 set (PA_SRC
     ${PA_DIR}/parser.cpp
@@ -62,6 +65,9 @@ set (PA_SRC
     ${PA_DIR}/error.cpp
     ${PA_DIR}/error_handler.cpp
     ${PA_DIR}/token_type.cpp
+	${PA_DIR}/stmnt_parser.cpp
+	${PA_DIR}/nt_parser.cpp
+	${PA_DIR}/compound_parser.cpp
 )
 
 set(HEADERS
