@@ -7,7 +7,7 @@ namespace psc { namespace im {
  
 class SymbolTableEntry;
     
-using ICodeNodeAttrValue = boost::variant<const SymbolTableEntry *>;
+using ICodeNodeAttrValue = boost::variant<int, const SymbolTableEntry *>;
     
 }
 }
