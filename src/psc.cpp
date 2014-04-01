@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
             std::cout << "Invalid file!" << std::endl;
         } else 
         {
-			im::ICode *icode = nullptr;
+			unique_ptr<im::ICode> icode = nullptr;
 			unique_ptr<im::SymbolTableStack> symtabstack;
 
             // ready source

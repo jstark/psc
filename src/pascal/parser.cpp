@@ -1,51 +1,57 @@
 #include "fe/token.h"
 #include "im/symbol_table.h"
+#include "im/icode.h"
 #include "msg/message.h"
 #include "pascal/parser.h"
 #include "pascal/error.h"
 #include "pascal/token_type.h"
+#include "pascal/stmnt_parser.h"
 #include <chrono>
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 
 using namespace psc;
+using namespace psc::im;
 using namespace psc::msg;
 using namespace psc::pascal;
 
 Parser::Parser(pascal::Scanner &&scanner, msg::MessageProducer &mp)
     : fe::Parser<pascal::Scanner>(std::move(scanner), mp) {}
 
-std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
+std::tuple<std::unique_ptr<im::ICode>, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
 {
     fe::Token token;
     auto start = std::chrono::system_clock::now();
-	auto symtabStack = im::SymbolTableFactory::make_stack();
+	auto symtabstack = im::SymbolTableFactory::make_stack();
+	auto icode = ICodeFactory::create_icode();
     try
     {
-        do
-        {
-            token = next_token();
-            auto type = (const pascal::TokenType *)token.type();
-            if (type == &IDENTIFIER)
-            {
-				std::string name = token.lexeme();
-				std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-
-				// If it's not already in the symbol table,
-				// create and anter a new entry for the identifier.
-				auto opt_entry = symtabStack->lookup(name);
-				im::SymbolTableEntry *entry = opt_entry.get_value_or(nullptr);
-				if (!entry)
-				{
-					entry = symtabStack->enter_local(name);
-				}
-				entry->append_line(token.line_number());
-            } else if (type == &ERROR)
-            {
-                ErrorHandler::flag(token, static_cast<const ErrorCode *>(boost::get<const void *>(token.value())), _mp);
-            }
-        } while (!token.is_eof());
+		std::unique_ptr<ICodeNode> root = nullptr; 
+		token = next_token();
+		auto type = (const pascal::TokenType *)token.type();
+		if (type == &BEGIN)
+		{
+			StatementParser stmnt_parser{ _scanner, *symtabstack, _mp };
+			root = stmnt_parser.parse(token);
+			token = _scanner.current();
+		}
+		else
+		{
+			ErrorHandler::flag(token, &UNEXPECTED_TOKEN, _mp);
+		}
         
+		// look for the final period.
+		if (token.type() != &DOT)
+		{
+			ErrorHandler::flag(token, &MISSING_PERIOD, _mp);
+		}
+
+		token = _scanner.current();
+		if (root)
+		{
+			icode->setRoot(std::move(root));
+		}
+
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed = end - start;
         
@@ -55,7 +61,7 @@ std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> Parser::parse()
     {
         ErrorHandler::abort_translation(&IO_ERROR, _mp);
     }
-	return std::make_tuple(nullptr, std::move(symtabStack));
+	return std::make_tuple(std::move(icode), std::move(symtabstack));
 }
 
 int Parser::error_count() const

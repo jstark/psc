@@ -23,7 +23,7 @@ public:
     explicit Parser(scanner_type &&scanner, msg::MessageProducer &mp)
         : _scanner(std::move(scanner)), _mp(mp) {}
 
-    virtual std::tuple<im::ICode*, std::unique_ptr<im::SymbolTableStack>> parse() = 0;
+    virtual std::tuple<std::unique_ptr<im::ICode>, std::unique_ptr<im::SymbolTableStack>> parse() = 0;
     virtual int error_count() const = 0;
 
     Token current_token() { return _scanner.current(); }
