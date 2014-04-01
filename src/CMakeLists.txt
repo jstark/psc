@@ -58,6 +58,8 @@ set (PA_HDR
 	${PA_DIR}/stmnt_parser.h
 	${PA_DIR}/nt_parser.h
 	${PA_DIR}/compound_parser.h
+	${PA_DIR}/assignment_parser.h
+	${PA_DIR}/expr_parser.h
 )
 set (PA_SRC
     ${PA_DIR}/parser.cpp
@@ -68,11 +70,13 @@ set (PA_SRC
 	${PA_DIR}/stmnt_parser.cpp
 	${PA_DIR}/nt_parser.cpp
 	${PA_DIR}/compound_parser.cpp
+	${PA_DIR}/assignment_parser.cpp
+	${PA_DIR}/expr_parser.cpp
 )
 
 set(HEADERS
     ${FE_HDR}
-	  ${IM_HDR}
+	${IM_HDR}
     ${MSG_HDR}
     ${PA_HDR}
     ${UTILS_HDR}
