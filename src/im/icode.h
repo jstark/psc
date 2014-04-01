@@ -78,7 +78,7 @@ public:
     /*
      * Set an attribute for this node.
      */
-    void setAttribute(ICodeKey key, ICodeNodeAttrValue value);
+    void set_attribute(ICodeKey key, ICodeNodeAttrValue value);
     
     /*
      * Get an attribute for a given key.

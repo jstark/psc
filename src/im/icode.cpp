@@ -72,7 +72,7 @@ std::vector<ICodeNode *> ICodeNode::children() const
     return vec;
 }
 
-void ICodeNode::setAttribute(ICodeKey key, ICodeNodeAttrValue value)
+void ICodeNode::set_attribute(ICodeKey key, ICodeNodeAttrValue value)
 {
     pimpl->attributes[key] = value;
 }
