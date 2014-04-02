@@ -2,12 +2,13 @@
 #define _PSC_IM_COMMON_H_
 
 #include <boost/variant.hpp>
+#include <string>
 
 namespace psc { namespace im {
  
 class SymbolTableEntry;
     
-using ICodeNodeAttrValue = boost::variant<int, const SymbolTableEntry *>;
+using ICodeNodeAttrValue = boost::variant<int, double, std::string, const SymbolTableEntry *>;
     
 }
 }

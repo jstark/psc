@@ -22,6 +22,11 @@ public:
 		: NonTerminalParser(s, ss, mp) {}
 
 	std::unique_ptr<im::ICodeNode> parse(const fe::Token &current);
+private:
+    std::unique_ptr<im::ICodeNode> parse_expression(const fe::Token &current);
+    std::unique_ptr<im::ICodeNode> parse_simple_expression(const fe::Token &current);
+    std::unique_ptr<im::ICodeNode> parse_term(const fe::Token &current);
+    std::unique_ptr<im::ICodeNode> parse_factor(const fe::Token &current);
 };
 
 }

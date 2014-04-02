@@ -1,5 +1,5 @@
 #ifndef _PSC_PASCAL_STMNT_PARSER_H_
-#define _PSC_PASCAL_STMTN_PARSER_H_
+#define _PSC_PASCAL_STMNT_PARSER_H_
 
 #include "im/icode.h"
 #include "utils/fwd.h"
@@ -37,4 +37,4 @@ private:
 }
 }
 
-#endif // _PSC_PASCAL_STMTN_PARSER_H_
+#endif // _PSC_PASCAL_STMNT_PARSER_H_
