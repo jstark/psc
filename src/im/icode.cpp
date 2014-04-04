@@ -3,6 +3,15 @@
 
 using namespace psc::im;
 
+#define X(a) \
+#a,
+
+const char *psc::im::ICodeNodeTypeNames[] = {
+	ICODENODETYPES
+};
+
+#undef X
+
 ////////////////////////////////////////////////////////////////////////////////
 struct ICode::ICodeImpl
 {
@@ -21,7 +30,7 @@ ICodeNode* ICode::setRoot(std::unique_ptr<ICodeNode> node)
     return node.get();
 }
 
-ICodeNode* ICode::root()
+ICodeNode* ICode::root() const
 {
     return pimpl->root.get();
 }
@@ -88,7 +97,7 @@ boost::optional<ICodeNodeAttrValue> ICodeNode::attribute(ICodeKey key) const
     return result;
 }
 
-void ICodeNode::foreach_attribute(std::function<void (ICodeKey, ICodeNodeAttrValue)> f)
+void ICodeNode::foreach_attribute(std::function<void (ICodeKey, ICodeNodeAttrValue)> f) const
 {
     for(const auto& p : pimpl->attributes)
     {
