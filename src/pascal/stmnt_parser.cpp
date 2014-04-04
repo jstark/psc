@@ -63,10 +63,10 @@ void StatementParser::parse_list(const Token &current, ICodeNode &parent, const 
 	sync.insert(terminator);
 
 	auto tok = current;
-	while (!current.is_eof() && current.type() != terminator)
+	while (!tok.is_eof() && tok.type() != terminator)
 	{
 		// parse a statement. the parent adopts the statement node.
-		parent.add_child(parse(current));
+		parent.add_child(parse(tok));
 		tok = _scanner.current();
 
 		// look for the semicolon between the statements.

@@ -65,8 +65,11 @@ ICodeNode* ICodeNode::parent()
 
 ICodeNode* ICodeNode::add_child(std::unique_ptr<ICodeNode> node)
 {
-    pimpl->children.push_back(std::move(node));
-    node->pimpl->parent = this;
+    if (node)
+    {
+        node->pimpl->parent = this;
+        pimpl->children.push_back(std::move(node));
+    }
     return node.get();
 }
 
