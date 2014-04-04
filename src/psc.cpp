@@ -9,6 +9,7 @@
 #include "im/symbol_table.h"
 #include "im/icode.h"
 #include "im/xref.h"
+#include "im/parse_tree_printer.h"
 #include "utils/var.h"
 #include "pascal/scanner.h"
 #include "pascal/parser.h"
@@ -123,6 +124,7 @@ int main(int argc, char *argv[])
     string config_file;
     bool xref = false;
     bool syntax_only = false;
+    bool ast = false;
 
     // command-line only options
     po::options_description generic("Generic options");
@@ -137,6 +139,7 @@ int main(int argc, char *argv[])
     po::options_description config("Configuration");
     config.add_options()
         ("crossref,x", po::bool_switch(&xref)->default_value(false), "performs cross-reference for identifiers")
+        ("ast,i", po::bool_switch(&ast)->default_value(false), "print the AST of the source")
         ("action,a", "either compile or interpret");
 
     // hidden options are allowed both in the command-line arguments, and 
@@ -213,6 +216,12 @@ int main(int argc, char *argv[])
 				im::CrossReferencer xr;
 				xr.print(symtabstack.get());
 			}
+            
+            if (ast)
+            {
+                im::ParseTreePrinter printer(std::cout);
+                printer.print(icode.get());
+            }
         }
     } 
     catch(...)

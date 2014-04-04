@@ -26,7 +26,7 @@ struct ParseTreePrinter::ParseTreePrinterImpl
     void print_node(const ICodeNode *node)
     {
 		static const std::string lt("<");
-		static const std::string gt("<");
+		static const std::string gt(">");
 		static const std::string close("</");
 
 		const char *node_name = ICodeNodeTypeNames[static_cast<int>(node->type())];
@@ -103,6 +103,8 @@ struct ParseTreePrinter::ParseTreePrinterImpl
 		std::string key_lower = key;
 		std::transform(key.begin(), key.end(), key_lower.begin(), ::tolower);
 		std::string text = key_lower + "=\"" + val + "\"";
+        append(" "); append(text);
+        
 		if (value.which() == 3)
 		{
 			auto entry = boost::get<const SymbolTableEntry *>(value);
@@ -135,7 +137,7 @@ struct ParseTreePrinter::ParseTreePrinterImpl
         }
         
         // append
-        if (!line_break && text == " ")
+        if (!(line_break && text == " "))
         {
             line.append(text);
             length += text_length;
