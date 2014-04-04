@@ -79,7 +79,7 @@ std::unique_ptr<ICodeNode> ExprParser::parse(const Token &current)
     return parse_expression(current);
 }
 
-std::unique_ptr<ICodeNode> ExprParser::parse_expression(const fe::Token &current)
+std::unique_ptr<ICodeNode> ExprParser::parse_expression(const Token &current)
 {
     // parse a simple expression, and make it the root
     auto tok = current;
@@ -106,7 +106,7 @@ std::unique_ptr<ICodeNode> ExprParser::parse_expression(const fe::Token &current
     return root;
 }
 
-std::unique_ptr<ICodeNode> ExprParser::parse_simple_expression(const fe::Token &current)
+std::unique_ptr<ICodeNode> ExprParser::parse_simple_expression(const Token &current)
 {
     const fe::TokenType *sign = nullptr; // type of leading sign, if any
 
@@ -159,7 +159,7 @@ std::unique_ptr<ICodeNode> ExprParser::parse_simple_expression(const fe::Token &
     return root;
 }
 
-std::unique_ptr<ICodeNode> ExprParser::parse_term(const fe::Token &current)
+std::unique_ptr<ICodeNode> ExprParser::parse_term(const Token &current)
 {
     // parse a factor and make its node the root node.
     auto tok = current;
@@ -189,7 +189,7 @@ std::unique_ptr<ICodeNode> ExprParser::parse_term(const fe::Token &current)
     return root;
 }
 
-std::unique_ptr<ICodeNode> ExprParser::parse_factor(const fe::Token &current)
+std::unique_ptr<ICodeNode> ExprParser::parse_factor(const Token &current)
 {
     std::unique_ptr<ICodeNode> root = nullptr;
     auto tok = current;
