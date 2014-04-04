@@ -23,31 +23,91 @@ struct ParseTreePrinter::ParseTreePrinterImpl
     std::string indentation;    // indentation of a line
     std::string line;           // output line
     
-    void print_node(ICodeNode *node)
+    void print_node(const ICodeNode *node)
     {
+		static const std::string lt("<");
+		static const std::string gt("<");
+		static const std::string close("</");
+
+		const char *node_name = ICodeNodeTypeNames[static_cast<int>(node->type())];
         // opening tag
-        append(indentation);
+		append(indentation); append(lt + node_name);
         
         print_attributes(node);
         print_type_spec(node);
-    }
+
+		auto children = node->children();
+		if (!children.empty())
+		{
+			append(gt);
+			print_line();
+			print_child_nodes(children);
+			append(indentation);
+			append(close + node_name + gt);
+		}
+		else
+		{
+			append(" "); append("/>");
+		}
+		print_line();
+	}
+
+	std::string key_to_str(ICodeKey key) const
+	{
+		if (key == ICodeKey::ID)
+		{
+			return "ID";
+		}
+		else if (key == ICodeKey::LINE)
+		{
+			return "LINE";
+		}
+		else if (key == ICodeKey::VALUE)
+		{
+			return "VALUE";
+		}
+		return "";
+	}
+
+	void print_child_nodes(const std::vector<ICodeNode *> &children)
+	{
+		std::string save = indentation;
+		indentation += indent;
+
+		for (const auto & ch : children)
+		{
+			print_node(ch);
+		}
+
+		indentation = save;
+	}
     
-    void print_attributes(ICodeNode *node)
+    void print_attributes(const ICodeNode *node)
     {
         using std::placeholders::_1;
         using std::placeholders::_2;
         
         std::string save_indendation = indentation;
         
-        node->foreach_attribute(
-            std::bind(&ParseTreePrinterImpl::print_attribute, this, _1, _2));
+		auto f = [=](ICodeKey key, ICodeNodeAttrValue val){ print_attribute(key_to_str(key), val); };
+		node->foreach_attribute(f);
         
         indentation = save_indendation;
     }
     
-    void print_attribute(ICodeKey key, ICodeNodeAttrValue value)
+    void print_attribute(const std::string &key, ICodeNodeAttrValue value)
     {
-        // TODO
+        // if the value is a symbol table entry, use the identifier's name.
+		// else just use the value string
+		std::string val = boost::apply_visitor(psc::im::to_str_visitor(), value);
+		std::string key_lower = key;
+		std::transform(key.begin(), key.end(), key_lower.begin(), ::tolower);
+		std::string text = key_lower + "=\"" + val + "\"";
+		if (value.which() == 3)
+		{
+			auto entry = boost::get<const SymbolTableEntry *>(value);
+			print_attribute("LEVEL", entry->symbol_table()->nesting_level());
+		}
     }
     
     void print_line()
@@ -82,7 +142,7 @@ struct ParseTreePrinter::ParseTreePrinterImpl
         }
     }
     
-    void print_type_spec(ICodeNode *node)
+    void print_type_spec(const ICodeNode *node)
     {
         
     }
@@ -94,7 +154,7 @@ ParseTreePrinter::ParseTreePrinter(std::ostream &stream)
 
 ParseTreePrinter::~ParseTreePrinter() {}
 
-void ParseTreePrinter::print(ICode *icode)
+void ParseTreePrinter::print(const ICode *icode)
 {
     pimpl->stream << "\n===== INTERMEDIATE CODE =====\n" << std::endl;
     pimpl->print_node(icode->root());

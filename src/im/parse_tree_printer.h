@@ -13,7 +13,7 @@ class ParseTreePrinter final
 public:
     explicit ParseTreePrinter(std::ostream &stream);
     ~ParseTreePrinter();
-    void print(ICode *icode);
+    void print(const ICode *icode);
     
 private:
     struct ParseTreePrinterImpl;
