@@ -9,25 +9,57 @@
 
 namespace psc {
 namespace im {
+
+#define ICODENODETYPES	\
+	X(PROGRAM)			\
+	X(PROCEDURE)		\
+	X(FUNCTION)			\
+	X(COMPOUND)			\
+	X(ASSIGN)			\
+	X(LOOP)				\
+	X(TEST)				\
+	X(CALL)				\
+	X(PARAMETERS)		\
+	X(IF)				\
+	X(SELECT)			\
+	X(SELECT_BRANCH)	\
+	X(SELECT_CONSTANTS)	\
+	X(NO_OP)			\
+	X(EQ)				\
+	X(NE)				\
+	X(LT)				\
+	X(LE)				\
+	X(GT)				\
+	X(GE)				\
+	X(NOT)				\
+	X(ADD)				\
+	X(SUBTRACT)			\
+	X(OR)				\
+	X(NEGATE)			\
+	X(MULTIPLY)			\
+	X(INTEGER_DIVIDE)	\
+	X(FLOAT_DIVIDE)		\
+	X(MOD)				\
+	X(AND)				\
+	X(VARIABLE)			\
+	X(SUBSCRIPTS)		\
+	X(FIELD)			\
+	X(INTEGER_CONSTANT)	\
+	X(REAL_CONSTANT)	\
+	X(STRING_CONSTANT)	\
+	X(BOOLEAN_CONSTANT)
+
+#define X(a) \
+	a,
     
 enum class ICodeNodeType
 {
-    // Program structure
-    PROGRAM, PROCEDURE, FUNCTION,
-    // Statements
-    COMPOUND, ASSIGN, LOOP, TEST, CALL, PARAMETERS,
-    IF, SELECT, SELECT_BRANCH, SELECT_CONSTANTS, NO_OP,
-    // Relational operators
-    EQ, NE, LT, LE, GT, GE, NOT,
-    // Additive operators
-    ADD, SUBTRACT, OR, NEGATE,
-    // Multiplicative operators
-    MULTIPLY, INTEGER_DIVIDE, FLOAT_DIVIDE, MOD, AND,
-    // Operands
-    VARIABLE, SUBSCRIPTS, FIELD,
-    INTEGER_CONSTANT, REAL_CONSTANT,
-    STRING_CONSTANT, BOOLEAN_CONSTANT,
+    ICODENODETYPES
 };
+
+#undef X
+
+extern const char *ICodeNodeTypeNames[];
     
 enum class ICodeKey
 {
@@ -42,7 +74,7 @@ public:
     ICode();
     ~ICode();
     ICodeNode* setRoot(std::unique_ptr<ICodeNode> node);
-    ICodeNode* root();
+    ICodeNode* root() const;
 private:
     struct ICodeImpl;
     std::unique_ptr<ICodeImpl> pimpl;
@@ -88,7 +120,7 @@ public:
     /*
      * Run a function f for each attribute in this node.
      */
-    void foreach_attribute(std::function<void(ICodeKey, ICodeNodeAttrValue)> f);
+    void foreach_attribute(std::function<void(ICodeKey, ICodeNodeAttrValue)> f) const;
 private:
     struct ICodeNodeImpl;
     std::unique_ptr<ICodeNodeImpl> pimpl;
