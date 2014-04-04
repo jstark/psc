@@ -17,6 +17,8 @@ namespace pascal {
 class ErrorCode;
 class Scanner;
 
+extern const SynchronizationSet STMNT_FOLLOW_SET;
+
 class StatementParser : public NonTerminalParser
 {
 public:

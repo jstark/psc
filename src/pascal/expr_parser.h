@@ -15,6 +15,8 @@ namespace pascal {
 
 class Scanner;
 
+extern const SynchronizationSet EXPR_START;
+
 class ExprParser : public NonTerminalParser
 {
 public:

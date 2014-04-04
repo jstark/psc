@@ -12,12 +12,19 @@ using namespace psc::fe;
 using namespace psc::im;
 using namespace psc::pascal;
 
+namespace psc {
+namespace pascal {
+
+
+const SynchronizationSet EXPR_START = { &PLUS, &MINUS, &IDENTIFIER, &INTEGER, &REAL, &STRING, &NOT, &LEFT_PAREN };
+
+}
+}
+
 namespace
 {
 
 using OpsMap = std::unordered_map<const psc::fe::TokenType *, ICodeNodeType>;
-
-const SynchronizationSet EXPR_START = { &PLUS, &MINUS, &IDENTIFIER, &INTEGER, &REAL, &STRING, &NOT, &LEFT_PAREN };
 
 const SynchronizationSet REL_OPS = { &EQUALS, &NOT_EQUALS, &LESS_THAN, &LESS_EQUALS, &GREATER_THAN, &GREATER_EQUALS };
 

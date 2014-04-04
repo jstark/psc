@@ -23,9 +23,15 @@ namespace
 
 	// synchronization set for starting a statement.
 	const SyncSet STMNT_START_SET = { &BEGIN, &CASE, &FOR, &IF, &REPEAT, &WHILE, &IDENTIFIER, &SEMICOLON };
+}
 
-	// synchronization set for following a statement.
-	const SyncSet STMNT_FOLLOW_SET = { &SEMICOLON, &END, &ELSE, &UNTIL, &DOT };
+namespace psc {
+namespace pascal {
+
+// synchronization set for following a statement.
+const SyncSet STMNT_FOLLOW_SET = { &SEMICOLON, &END, &ELSE, &UNTIL, &DOT };
+
+}
 }
 
 unique_ptr<ICodeNode> StatementParser::parse(const Token &current)
