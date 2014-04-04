@@ -1,5 +1,6 @@
 #include "pascal/stmnt_parser.h"
 #include "pascal/compound_parser.h"
+#include "pascal/assignment_parser.h"
 #include "pascal/scanner.h"
 #include "pascal/token_type.h"
 #include "pascal/error_handler.h"
@@ -43,8 +44,11 @@ unique_ptr<ICodeNode> StatementParser::parse(const Token &current)
 	{
 		CompoundParser compound_parser{ _scanner, _symtabstack, _mp };
 		node = compound_parser.parse(current);
-	}
-	else
+	} else if (type == &IDENTIFIER)
+	{
+		AssignmentParser assignment_parser{ _scanner, _symtabstack, _mp };
+		node = assignment_parser.parse(current);
+	} else
 	{
 		node = ICodeFactory::create_node(ICodeNodeType::NO_OP);
 	}
