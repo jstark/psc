@@ -100,6 +100,7 @@ std::unique_ptr<ICodeNode> ExprParser::parse_expression(const Token &current)
         // as its first child.
         auto op_type = REL_OPS_MAP.at(type);
         auto op_node = ICodeFactory::create_node(op_type);
+        op_node->add_child(std::move(root));
 
         tok = _scanner.next(); // consume the operator
 
