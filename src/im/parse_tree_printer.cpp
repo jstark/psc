@@ -19,7 +19,7 @@ struct ParseTreePrinter::ParseTreePrinterImpl
     
     std::ostream &stream;       // output print stream
     int length{0};              // output line length
-    std::string indent{INDENT_WIDTH, ' '};         // indent spaces
+    std::string indent = std::string(INDENT_WIDTH, ' ');         // indent spaces
     std::string indentation;    // indentation of a line
     std::string line;           // output line
     
