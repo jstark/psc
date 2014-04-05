@@ -134,7 +134,7 @@ std::unique_ptr<ICodeNode> ExprParser::parse_simple_expression(const Token &curr
     {
         // create a NEGATE node and adopt the current tree
         // as its child. the NEGATE node becomes the new root node.
-        auto negate = ICodeFactory::create_node(ICodeNodeType::NOT);
+        auto negate = ICodeFactory::create_node(ICodeNodeType::NEGATE);
         negate->add_child(std::move(root));
         root = std::move(negate);
     }
