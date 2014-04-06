@@ -10,4 +10,5 @@ unique_ptr<Backend> Backend::create(const string &type, psc::msg::MessageProduce
 {
 	unique_ptr<Interpreter> interp(new Interpreter(mp));
 	return std::move(interp);
+}
 

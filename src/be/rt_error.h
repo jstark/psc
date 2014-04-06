@@ -36,4 +36,4 @@ private:
 }
 }
 
-#endif _PSC_BE_RT_ERROR_H_INCLUDED_
+#endif //_PSC_BE_RT_ERROR_H_INCLUDED_
