@@ -95,7 +95,7 @@ public:
      * Get the node's parent. Do not delete this
      * pointer.
      */
-    ICodeNode* parent();
+    ICodeNode* parent() const;
     
     /*
      * Add a child node and return that node.

@@ -58,7 +58,7 @@ ICodeNodeType ICodeNode::type() const
     return pimpl->type;
 }
 
-ICodeNode* ICodeNode::parent()
+ICodeNode* ICodeNode::parent() const
 {
     return pimpl->parent;
 }
