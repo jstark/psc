@@ -1,11 +1,13 @@
 #include "be/backend.h"
+#include "be/interpreter.h"
 
 using namespace psc::im;
 using namespace psc::be;
 using std::unique_ptr;
 using std::string;
 
-std::unique_ptr<Backend> Backend::create(const string &type)
+unique_ptr<Backend> Backend::create(const string &type, psc::msg::MessageProducer &mp)
 {
-	return nullptr;
+	unique_ptr<Interpreter> interp(new Interpreter(mp));
+	return std::move(interp);
 }

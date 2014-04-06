@@ -78,9 +78,11 @@ set (PA_SRC
 set (BE_DIR "${SRC_DIR}/be")
 set (BE_HDR 
 	${BE_DIR}/backend.h
+	${BE_DIR}/interpreter.h
 )
 set (BE_SRC
 	${BE_DIR}/backend.cpp
+	${BE_DIR}/interpreter.cpp
 )
 
 set(HEADERS
