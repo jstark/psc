@@ -79,10 +79,14 @@ set (BE_DIR "${SRC_DIR}/be")
 set (BE_HDR 
 	${BE_DIR}/backend.h
 	${BE_DIR}/interpreter.h
+	${BE_DIR}/rt_error.h
+	${BE_DIR}/rt_error_handler.h
 )
 set (BE_SRC
 	${BE_DIR}/backend.cpp
 	${BE_DIR}/interpreter.cpp
+	${BE_DIR}/rt_error.cpp
+	${BE_DIR}/rt_error_handler.cpp
 )
 
 set(HEADERS
