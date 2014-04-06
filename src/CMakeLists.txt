@@ -74,19 +74,30 @@ set (PA_SRC
 	${PA_DIR}/expr_parser.cpp
 )
 
+#backend
+set (BE_DIR "${SRC_DIR}/be")
+set (BE_HDR 
+	${BE_DIR}/backend.h
+)
+set (BE_SRC
+	${BE_DIR}/backend.cpp
+)
+
 set(HEADERS
     ${FE_HDR}
 	${IM_HDR}
     ${MSG_HDR}
     ${PA_HDR}
     ${UTILS_HDR}
+	${BE_HDR}
 )
 
 set(SOURCES
     psc.cpp
     ${FE_SRC}
-	  ${IM_SRC}
+    ${IM_SRC}
     ${PA_SRC}
+	${BE_SRC}
 )
 
 include_directories(.)
