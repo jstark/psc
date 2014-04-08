@@ -62,6 +62,7 @@ set (PA_HDR
 	${PA_DIR}/expr_parser.h
 	${PA_DIR}/while_parser.h
 	${PA_DIR}/repeat_parser.h
+	${PA_DIR}/for_parser.h
 )
 set (PA_SRC
     ${PA_DIR}/parser.cpp
@@ -76,6 +77,7 @@ set (PA_SRC
 	${PA_DIR}/expr_parser.cpp
 	${PA_DIR}/while_parser.cpp
 	${PA_DIR}/repeat_parser.cpp
+	${PA_DIR}/for_parser.cpp
 )
 
 #backend
