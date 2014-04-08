@@ -32,6 +32,7 @@ public:
 		const ErrorCode &error);
 
 	static SynchronizationSet follow_set();
+	static SynchronizationSet start_set();
 private:
 	void set_line(im::ICodeNode &node, int line);
 };

@@ -23,8 +23,7 @@ namespace
 {
 	using SyncSet = unordered_set<const psc::fe::TokenType *>;
 
-	// synchronization set for starting a statement.
-	const SyncSet STMNT_START_SET = { &BEGIN, &CASE, &FOR, &IF, &REPEAT, &WHILE, &IDENTIFIER, &SEMICOLON };
+
 }
 
 unique_ptr<ICodeNode> StatementParser::parse(const Token &current)
@@ -57,7 +56,8 @@ unique_ptr<ICodeNode> StatementParser::parse(const Token &current)
 
 void StatementParser::parse_list(const Token &current, ICodeNode &parent, const psc::fe::TokenType *terminator, const ErrorCode &error)
 {
-	SyncSet sync(STMNT_START_SET.begin(), STMNT_START_SET.end());
+	auto stmnt_start_set = StatementParser::start_set();
+	SyncSet sync(stmnt_start_set.begin(), stmnt_start_set.end());
 	sync.insert(terminator);
 
 	auto tok = current;
@@ -72,7 +72,7 @@ void StatementParser::parse_list(const Token &current, ICodeNode &parent, const 
 		{
 			tok = _scanner.next(); // consume it.
 		}
-		else if (STMNT_START_SET.count(tok.type()))
+		else if (stmnt_start_set.count(tok.type()))
 		{
 			ErrorHandler::flag(tok, &MISSING_SEMICOLON, _mp);
 		}
@@ -101,6 +101,11 @@ void StatementParser::set_line(ICodeNode &node, int line)
 SynchronizationSet StatementParser::follow_set()
 {
 	// synchronization set for following a statement.
-	static const SyncSet stmnt_follow_set = { &SEMICOLON, &END, &ELSE, &UNTIL, &DOT };
-	return stmnt_follow_set;
+	return  { &SEMICOLON, &END, &ELSE, &UNTIL, &DOT };
+}
+
+SynchronizationSet StatementParser::start_set()
+{
+	// synchronization set for starting a statement.
+	return { &BEGIN, &CASE, &FOR, &IF, &REPEAT, &WHILE, &IDENTIFIER, &SEMICOLON };
 }
