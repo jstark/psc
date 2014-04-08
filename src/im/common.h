@@ -7,8 +7,6 @@
 #include "im/symbol_table.h"
 
 namespace psc { namespace im {
- 
-class SymbolTableEntry;
     
 using ICodeNodeAttrValue = boost::variant<int, double, std::string, const SymbolTableEntry *>;
    
