@@ -108,6 +108,14 @@ void ICodeNode::foreach_attribute(std::function<void (ICodeKey, ICodeNodeAttrVal
     }
 }
 
+std::unique_ptr<ICodeNode> ICodeNode::copy() const
+{
+	auto cp = ICodeFactory::create_node(type());
+	foreach_attribute([&](ICodeKey k, ICodeNodeAttrValue v) { cp->set_attribute(k, v); });
+	return cp;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 std::unique_ptr<ICode> ICodeFactory::create_icode()
 {
