@@ -19,7 +19,7 @@ namespace
 {
 	SynchronizationSet make_do_set()
 	{
-		SynchronizationSet do_only = STMNT_FOLLOW_SET;
+		SynchronizationSet do_only = StatementParser::follow_set();
 		do_only.insert(&DO);
 		return do_only;
 	}

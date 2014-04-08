@@ -27,15 +27,6 @@ namespace
 	const SyncSet STMNT_START_SET = { &BEGIN, &CASE, &FOR, &IF, &REPEAT, &WHILE, &IDENTIFIER, &SEMICOLON };
 }
 
-namespace psc {
-namespace pascal {
-
-// synchronization set for following a statement.
-const SyncSet STMNT_FOLLOW_SET = { &SEMICOLON, &END, &ELSE, &UNTIL, &DOT };
-
-}
-}
-
 unique_ptr<ICodeNode> StatementParser::parse(const Token &current)
 {
 	unique_ptr<ICodeNode> node;
@@ -105,4 +96,11 @@ void StatementParser::parse_list(const Token &current, ICodeNode &parent, const 
 void StatementParser::set_line(ICodeNode &node, int line)
 {
 	node.set_attribute(ICodeKey::LINE, line);
+}
+
+SynchronizationSet StatementParser::follow_set()
+{
+	// synchronization set for following a statement.
+	static const SyncSet stmnt_follow_set = { &SEMICOLON, &END, &ELSE, &UNTIL, &DOT };
+	return stmnt_follow_set;
 }

@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <set>
 
 using namespace psc::fe;
 using namespace psc::im;
@@ -19,13 +20,11 @@ namespace
 {
 	SynchronizationSet colon_equals()
 	{
-		std::unordered_set<const psc::fe::TokenType *> ce = { &COLON_EQUALS };
-		std::set_union(
-			STMNT_FOLLOW_SET.begin(), STMNT_FOLLOW_SET.end(),
-			EXPR_START.begin(), EXPR_START.end(),
-			std::inserter(ce, ce.begin())
-			);
-		return ce;
+		auto expr_start_set = ExprParser::start_set();
+		auto colon_equals_set = StatementParser::follow_set();
+		colon_equals_set.insert(&COLON_EQUALS);
+		colon_equals_set.insert(expr_start_set.begin(), expr_start_set.end());
+		return colon_equals_set;
 	}
 
 	const SynchronizationSet COLON_EQUALS_SET = colon_equals();

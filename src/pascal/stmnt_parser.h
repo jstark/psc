@@ -17,8 +17,6 @@ namespace pascal {
 class ErrorCode;
 class Scanner;
 
-extern const SynchronizationSet STMNT_FOLLOW_SET;
-
 class StatementParser : public NonTerminalParser
 {
 public:
@@ -32,6 +30,8 @@ public:
 		im::ICodeNode &parent,
 		const fe::TokenType *terminator,
 		const ErrorCode &error);
+
+	static SynchronizationSet follow_set();
 private:
 	void set_line(im::ICodeNode &node, int line);
 };
