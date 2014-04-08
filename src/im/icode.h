@@ -121,6 +121,11 @@ public:
      * Run a function f for each attribute in this node.
      */
     void foreach_attribute(std::function<void(ICodeKey, ICodeNodeAttrValue)> f) const;
+
+	/*
+	 * Copy a node;
+	 */
+	std::unique_ptr<ICodeNode> copy() const;
 private:
     struct ICodeNodeImpl;
     std::unique_ptr<ICodeNodeImpl> pimpl;
