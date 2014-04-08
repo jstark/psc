@@ -115,3 +115,9 @@ set(SOURCES
 include_directories(.)
 add_executable(psc ${HEADERS} ${SOURCES})
 target_link_libraries(psc ${Boost_LIBRARIES})
+
+source_group("frontend" FILES ${FE_HDR} ${FE_SRC})
+source_group("intermediate" FILES ${IM_HDR} ${IM_SRC})
+source_group("backend"  FILES ${BE_HDR} ${BE_SRC})
+source_group("pascal"  FILES ${PA_HDR} ${PA_SRC})
+source_group("various" FILES ${UTILS_HDR} ${MSG_HDR} psc.cpp)
