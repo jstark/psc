@@ -55,31 +55,34 @@ set (PA_HDR
     ${PA_DIR}/error.h
     ${PA_DIR}/error_handler.h
     ${PA_DIR}/token_type.h
-	${PA_DIR}/stmnt_parser.h
-	${PA_DIR}/nt_parser.h
-	${PA_DIR}/compound_parser.h
-	${PA_DIR}/assignment_parser.h
-	${PA_DIR}/expr_parser.h
-	${PA_DIR}/while_parser.h
-	${PA_DIR}/repeat_parser.h
-	${PA_DIR}/for_parser.h
-	${PA_DIR}/case_parser.h
+    ${PA_DIR}/stmnt_parser.h
+    ${PA_DIR}/nt_parser.h
+    ${PA_DIR}/compound_parser.h
+    ${PA_DIR}/assignment_parser.h
+    ${PA_DIR}/if_parser.h
+    ${PA_DIR}/expr_parser.h
+    ${PA_DIR}/while_parser.h
+    ${PA_DIR}/repeat_parser.h
+    ${PA_DIR}/for_parser.h
+    ${PA_DIR}/case_parser.h
 )
+
 set (PA_SRC
     ${PA_DIR}/parser.cpp
     ${PA_DIR}/scanner.cpp
     ${PA_DIR}/error.cpp
     ${PA_DIR}/error_handler.cpp
     ${PA_DIR}/token_type.cpp
-	${PA_DIR}/stmnt_parser.cpp
-	${PA_DIR}/nt_parser.cpp
-	${PA_DIR}/compound_parser.cpp
-	${PA_DIR}/assignment_parser.cpp
-	${PA_DIR}/expr_parser.cpp
-	${PA_DIR}/while_parser.cpp
-	${PA_DIR}/repeat_parser.cpp
-	${PA_DIR}/for_parser.cpp
-	${PA_DIR}/case_parser.cpp
+    ${PA_DIR}/stmnt_parser.cpp
+    ${PA_DIR}/nt_parser.cpp
+    ${PA_DIR}/compound_parser.cpp
+    ${PA_DIR}/assignment_parser.cpp
+    ${PA_DIR}/if_parser.cpp
+    ${PA_DIR}/expr_parser.cpp
+    ${PA_DIR}/while_parser.cpp
+    ${PA_DIR}/repeat_parser.cpp
+    ${PA_DIR}/for_parser.cpp
+    ${PA_DIR}/case_parser.cpp
 )
 
 #backend
@@ -99,11 +102,11 @@ set (BE_SRC
 
 set(HEADERS
     ${FE_HDR}
-	${IM_HDR}
+    ${IM_HDR}
     ${MSG_HDR}
     ${PA_HDR}
     ${UTILS_HDR}
-	${BE_HDR}
+    ${BE_HDR}
 )
 
 set(SOURCES
@@ -111,7 +114,7 @@ set(SOURCES
     ${FE_SRC}
     ${IM_SRC}
     ${PA_SRC}
-	${BE_SRC}
+    ${BE_SRC}
 )
 
 include_directories(.)
