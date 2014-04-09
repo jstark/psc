@@ -92,12 +92,14 @@ set (BE_HDR
 	${BE_DIR}/interpreter.h
 	${BE_DIR}/rt_error.h
 	${BE_DIR}/rt_error_handler.h
+	${BE_DIR}/stmnt_interpreter.h
 )
 set (BE_SRC
 	${BE_DIR}/backend.cpp
 	${BE_DIR}/interpreter.cpp
 	${BE_DIR}/rt_error.cpp
 	${BE_DIR}/rt_error_handler.cpp
+	${BE_DIR}/stmnt_interpreter.cpp
 )
 
 set(HEADERS
