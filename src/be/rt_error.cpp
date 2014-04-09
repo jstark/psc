@@ -6,7 +6,7 @@ RuntimeErrorCode::RuntimeErrorCode(const std::string &msg)
 : _message(msg) {}
 
 namespace psc {
-	namespace pascal {
+	namespace be {
 
 #define DEFINE_ERROR_CODE(var, msg) \
 	const RuntimeErrorCode var{ msg };
