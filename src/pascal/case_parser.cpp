@@ -108,7 +108,7 @@ unique_ptr<ICodeNode> CaseParser::parse_constant(const Token &token, ConstantSet
 	}
 	else if (type == &STRING)
 	{
-		//TODO:constant = parse_char_constant(tok, boost::apply_visitor(to_str_visitor(), tok.value()), sign);
+		constant = parse_char_constant(tok, boost::apply_visitor(utils::to_str_visitor(), tok.value()), sign);
 	}
 	else
 	{
