@@ -2,6 +2,10 @@
 #include "pascal/compound_parser.h"
 #include "pascal/assignment_parser.h"
 #include "pascal/while_parser.h"
+#include "pascal/repeat_parser.h"
+#include "pascal/for_parser.h"
+#include "pascal/if_parser.h"
+#include "pascal/case_parser.h"
 #include "pascal/scanner.h"
 #include "pascal/token_type.h"
 #include "pascal/error_handler.h"
@@ -41,11 +45,32 @@ unique_ptr<ICodeNode> StatementParser::parse(const Token &current)
 		AssignmentParser assignment_parser{ _scanner, _symtabstack, _mp };
 		node = assignment_parser.parse(current);
 	}
+	else if (type == &REPEAT)
+	{
+		RepeatParser repeat_parser{ _scanner, _symtabstack, _mp };
+		node = repeat_parser.parse(current);
+	}
 	else if (type == &WHILE)
 	{
 		WhileParser while_parser{ _scanner, _symtabstack, _mp };
 		node = while_parser.parse(current);
-	} else
+	}
+	else if (type == &FOR)
+	{
+		ForParser for_parser{ _scanner, _symtabstack, _mp };
+		node = for_parser.parse(current);
+	}
+	else if (type == &IF)
+	{
+		IfParser if_parser{ _scanner, _symtabstack, _mp };
+		node = if_parser.parse(current);
+	}
+	else if (type == &CASE)
+	{
+		CaseParser case_parser{ _scanner, _symtabstack, _mp };
+		node = case_parser.parse(current);
+	}
+	else
 	{
 		node = ICodeFactory::create_node(ICodeNodeType::NO_OP);
 	}
