@@ -93,6 +93,8 @@ set (BE_HDR
 	${BE_DIR}/rt_error.h
 	${BE_DIR}/rt_error_handler.h
 	${BE_DIR}/stmnt_interpreter.h
+	${BE_DIR}/compound_interpreter.h
+	${BE_DIR}/common.h
 )
 set (BE_SRC
 	${BE_DIR}/backend.cpp
@@ -100,6 +102,8 @@ set (BE_SRC
 	${BE_DIR}/rt_error.cpp
 	${BE_DIR}/rt_error_handler.cpp
 	${BE_DIR}/stmnt_interpreter.cpp
+	${BE_DIR}/compound_interpreter.cpp
+	${BE_DIR}/common.cpp
 )
 
 set(HEADERS
