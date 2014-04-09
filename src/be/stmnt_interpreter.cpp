@@ -1,4 +1,5 @@
 #include "be/stmnt_interpreter.h"
+#include "be/compound_interpreter.h"
 #include "be/rt_error.h"
 #include "be/rt_error_handler.h"
 #include "be/common.h"
@@ -17,6 +18,11 @@ void* StatementInterpreter::execute(const ICodeNode &node, int *exec_count)
 	auto type = node.type();
 	switch (type)
 	{
+	case ICodeNodeType::COMPOUND:
+	{
+		CompoundInterpreter compound_interpreter{ _mp };
+		return compound_interpreter.execute(node, exec_count);
+	}
 	case ICodeNodeType::NO_OP:
 		return nullptr;
 	default:
