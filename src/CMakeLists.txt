@@ -96,6 +96,10 @@ set (BE_HDR
 	${BE_DIR}/compound_interpreter.h
 	${BE_DIR}/common.h
   ${BE_DIR}/expr_interpreter.h
+  ${BE_DIR}/assign_interpreter.h
+  ${BE_DIR}/if_interpreter.h
+  ${BE_DIR}/loop_interpreter.h
+  ${BE_DIR}/case_interpreter.h
 )
 set (BE_SRC
 	${BE_DIR}/backend.cpp
@@ -106,6 +110,10 @@ set (BE_SRC
 	${BE_DIR}/compound_interpreter.cpp
 	${BE_DIR}/common.cpp
   ${BE_DIR}/expr_interpreter.cpp
+  ${BE_DIR}/assign_interpreter.cpp
+  ${BE_DIR}/if_interpreter.cpp
+  ${BE_DIR}/loop_interpreter.cpp
+  ${BE_DIR}/case_interpreter.cpp
 )
 
 set(HEADERS
