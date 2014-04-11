@@ -37,3 +37,4 @@ BEGIN
     ch := 'x';
     str:= 'hello, world'
 END.
+
