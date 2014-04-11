@@ -12,7 +12,7 @@ FWD_DECL_NS_NS_CL(psc, im, ICodeNode)
 namespace psc {
 namespace be {
 
-using ExprVal = boost::variant<bool, int, double, std::string>;
+using ExprVal = boost::variant<bool, int, double, std::string, void *>;
 
 class ExprInterpreter final
 {
@@ -23,6 +23,8 @@ public:
     ExprVal execute(const im::ICodeNode &node, int *exec_count);
 
 private:
+    ExprVal execute_binop(const im::ICodeNode &node, int *exec_count);
+
     const msg::MessageProducer &_mp;
 };
 
