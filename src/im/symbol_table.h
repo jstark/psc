@@ -20,7 +20,7 @@ enum class SymbolTableKey
 	DataValue
 };
 
-using SymbolTableKeyValue = boost::variant<int, double, std::string, const void *>;
+using SymbolTableKeyValue = boost::variant<int, double, std::string>;
 
 class SymbolTable;
 class SymbolTableEntry;
