@@ -8,7 +8,7 @@
 
 namespace psc { namespace im {
     
-using ICodeNodeAttrValue = boost::variant<int, double, std::string, const SymbolTableEntry *>;
+using ICodeNodeAttrValue = boost::variant<int, double, std::string, SymbolTableEntry *>;
    
 class to_str_visitor : public boost::static_visitor<std::string>
 {
