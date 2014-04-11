@@ -119,7 +119,7 @@ void ParserMessageListener::receive_msg(const msg::Message &message)
 }
 
 static const char* INTERPRETER_SUMMARY_FORMAT = "\n%d statements executed \n%d runtime errors \n%8.2f seconds total execution time.";
-static const char* ASSIGN_FORMAT = ">>> LINE %d: %s = %s ";
+static const char* ASSIGN_FORMAT = ">>> LINE %d: %s = %s \n";
 
 class BackendMessageListener final: public msg::MessageListener
 {
@@ -283,6 +283,7 @@ int main(int argc, char *argv[])
             BackendMessageListener bml;
             psc::msg::MessageProducer bmp;
             bmp.add(&bml);
+			//bmp.add(&sml);
             auto backend = be::Backend::create("intepret", bmp);
             backend->process(std::move(icode), std::move(symtabstack));
         }
