@@ -154,7 +154,7 @@ void SymbolTableEntry::set_attribute(SymbolTableKey key, SymbolTableKeyValue val
 	pimpl->attributes[key] = val;
 }
 
-SymbolTableKeyValue SymbolTableEntry::attribute(SymbolTableKey key)
+SymbolTableKeyValue SymbolTableEntry::attribute(SymbolTableKey key) const
 {
 	return pimpl->attributes[key];
 }

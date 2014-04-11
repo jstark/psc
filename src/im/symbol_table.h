@@ -112,7 +112,7 @@ public:
 	void set_attribute(SymbolTableKey key, SymbolTableKeyValue val);
 
 	// Get an attribute for a given key
-	SymbolTableKeyValue attribute(SymbolTableKey key);
+    SymbolTableKeyValue attribute(SymbolTableKey key) const;
 private:
 	struct SymbolTableEntryImpl;
 	std::unique_ptr<SymbolTableEntryImpl> pimpl;
