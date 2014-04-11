@@ -3,6 +3,7 @@
 
 #include "utils/fwd.h"
 #include <string>
+#include <sstream>
 #include <boost/variant.hpp>
 #include <memory>
 
@@ -13,6 +14,36 @@ namespace psc {
 namespace be {
 
 using ExprVal = boost::variant<bool, int, double, std::string, void *>;
+
+struct ExprValToString : public boost::static_visitor<std::string>
+{
+	std::string operator()(bool b) const
+	{
+		return b ? "True" : "False";
+	}
+
+	std::string operator()(int i) const
+	{
+		return std::to_string(i);
+	}
+
+	std::string operator()(double d) const
+	{
+		std::ostringstream out;
+		out << d;
+		return out.str();
+	}
+
+	std::string operator()(const std::string& s) const
+	{
+		return s;
+	}
+
+	std::string operator()(const void *p) const
+	{
+		return "object";
+	}
+};
 
 class ExprInterpreter final
 {
