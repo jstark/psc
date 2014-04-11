@@ -75,7 +75,7 @@ ExprVal ExprInterpreter::execute(const ICodeNode &node, int *exec_count)
 
     } else
     {
-        // must be binary operator
+		return execute_binop(node, exec_count);
     }
     return 0;
 }
