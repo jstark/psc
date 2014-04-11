@@ -95,6 +95,7 @@ set (BE_HDR
 	${BE_DIR}/stmnt_interpreter.h
 	${BE_DIR}/compound_interpreter.h
 	${BE_DIR}/common.h
+  ${BE_DIR}/expr_interpreter.h
 )
 set (BE_SRC
 	${BE_DIR}/backend.cpp
@@ -104,6 +105,7 @@ set (BE_SRC
 	${BE_DIR}/stmnt_interpreter.cpp
 	${BE_DIR}/compound_interpreter.cpp
 	${BE_DIR}/common.cpp
+  ${BE_DIR}/expr_interpreter.cpp
 )
 
 set(HEADERS
