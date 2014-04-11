@@ -80,7 +80,7 @@ ExprVal ExprInterpreter::execute(const ICodeNode &node, int *exec_count)
     return 0;
 }
 
-ExprVal ExprInterpreter::execute_binop(const im::ICodeNode &node, int *exec_count)
+ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
 {
     // get the two operand children of the operator node.
     auto children = node.children();
