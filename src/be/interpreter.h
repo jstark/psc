@@ -8,7 +8,7 @@
 #include <string>
 
 FWD_DECL_NS_NS_CL(psc, im, ICode);
-FWD_DECL_NS_NS_CL(psc, im, SymbolTable);
+FWD_DECL_NS_NS_CL(psc, im, SymbolTableStack);
 
 namespace psc {
 namespace be {
@@ -19,7 +19,7 @@ public:
 	friend class Backend;
 	explicit Interpreter(psc::msg::MessageProducer &mp)
 		: Backend(mp) {}
-	void process(std::unique_ptr<im::ICode> iCode, std::unique_ptr<im::SymbolTable> symtab) override;
+    void process(std::unique_ptr<im::ICode> iCode, std::unique_ptr<im::SymbolTableStack> symtab) override;
 private:
 	Interpreter();
 };

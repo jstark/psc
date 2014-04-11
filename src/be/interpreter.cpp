@@ -9,7 +9,7 @@ using namespace psc::be;
 using namespace psc::msg;
 using std::unique_ptr;
 
-void Interpreter::process(unique_ptr<ICode> iCode, unique_ptr<SymbolTable> symtab)
+void Interpreter::process(unique_ptr<ICode> iCode, unique_ptr<SymbolTableStack> symtab)
 {
 	int exec_count = 0;
 	int errors = 0;

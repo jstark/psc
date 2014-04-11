@@ -14,6 +14,7 @@
 #include "pascal/scanner.h"
 #include "pascal/parser.h"
 #include "pascal/token_type.h"
+#include "be/backend.h"
 
 using std::string;
 using std::vector;
@@ -114,6 +115,62 @@ void ParserMessageListener::receive_msg(const msg::Message &message)
             break;
         default:
             break;
+    }
+}
+
+static const char* INTERPRETER_SUMMARY_FORMAT = "\n%d statements executed \n%d runtime errors \n%8.2f seconds total execution time.";
+static const char* ASSIGN_FORMAT = ">>> LINE %d: %s = %s ";
+
+class BackendMessageListener final: public msg::MessageListener
+{
+public:
+    void receive_msg(const msg::Message &message) override;
+
+private:
+    bool first_output{false};
+};
+
+void BackendMessageListener::receive_msg(const msg::Message &message)
+{
+    msg::MessageType type = message.type();
+    vector<utils::var> args = message.args();
+
+    switch(type)
+    {
+    case msg::MessageType::InterpreterSummary:
+    {
+        auto item1 = boost::get<int>(args.at(0));
+        auto item2 = boost::get<int>(args.at(1));
+        auto item3 = boost::get<double>(args.at(2));
+        printf(INTERPRETER_SUMMARY_FORMAT, item1, item2, item3);
+    }
+        break;
+    case msg::MessageType::Assign:
+    {
+        if (first_output)
+        {
+            printf("\n===== OUTPUT ======\n");
+            first_output = false;
+        }
+
+        auto line_number = boost::get<int>(args.at(0));
+        auto variable = boost::get<std::string>(args.at(1));
+        auto value = boost::get<std::string>(args.at(2));
+        printf(ASSIGN_FORMAT, line_number, variable.c_str(), value.c_str());
+    }
+        break;
+    case msg::MessageType::RuntimeError:
+    {
+        auto error_msg = boost::get<std::string>(args.at(0));
+        auto line_num = boost::get<int>(args.at(1));
+
+        printf("*** RUNTIME ERROR");
+        printf(" AT LINE %d", line_num);
+        printf(" : %s\n", error_msg.c_str());
+    }
+        break;
+    default:
+        break;
     }
 }
 
@@ -222,6 +279,12 @@ int main(int argc, char *argv[])
                 im::ParseTreePrinter printer(std::cout);
                 printer.print(icode.get());
             }
+
+            BackendMessageListener bml;
+            psc::msg::MessageProducer bmp;
+            bmp.add(&bml);
+            auto backend = be::Backend::create("intepret", bmp);
+            backend->process(std::move(icode), std::move(symtabstack));
         }
     } 
     catch(...)
