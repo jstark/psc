@@ -21,7 +21,8 @@ namespace
         {
             auto var_line_num = opt_line_num.get();
             int line_num = boost::get<int>(var_line_num);
-            Message msg(MessageType::Assign, {line_num, var, value});
+			std::string sval = boost::apply_visitor(ExprValToString(), value);
+            Message msg(MessageType::Assign, {line_num, var, sval});
             mp.send_msg(msg);
         }
     }
@@ -38,15 +39,14 @@ void* AssignInterpreter::execute(const ICodeNode &node, int *exec_count)
 
     // Interpret the expression and get its value.
     ExprInterpreter expr_interpreter{ _mp };
-    auto value = expr_interpreter.execute(node, exec_count);
+    auto value = expr_interpreter.execute(*expression, exec_count);
 
     // set the value as an attribute of the variable's symbol table entry.
     auto opt_variable_id = variable->attribute(ICodeKey::ID);
     auto var_variable_id = opt_variable_id.get();
     auto entry = boost::get<SymbolTableEntry *>(var_variable_id);
 
-    SymbolTableKeyValue kv;
-    entry->set_attribute(SymbolTableKey::DataValue, kv);
+    entry->set_attribute(SymbolTableKey::DataValue, value);
 
     send_message(node, entry->name(), value, _mp);
     (*exec_count)++;
