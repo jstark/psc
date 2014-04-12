@@ -121,7 +121,7 @@ unique_ptr<ICodeNode> CaseParser::parse_branch(const Token &token, ConstantSet *
 	// parse the list of CASE branch constants.
 	// the SELECT_CONSTANTS node adopts each constant.
 	parse_constant_list(tok, *constants, cs);
-	branch->add_child(std::move(branch));
+	branch->add_child(std::move(constants));
 
 	// look for the : token
 	tok = _scanner.current();
