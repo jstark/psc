@@ -26,8 +26,6 @@ using std::unordered_set;
 namespace
 {
 	using SyncSet = unordered_set<const psc::fe::TokenType *>;
-
-
 }
 
 unique_ptr<ICodeNode> StatementParser::parse(const Token &current)
