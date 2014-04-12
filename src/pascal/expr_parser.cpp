@@ -255,8 +255,13 @@ std::unique_ptr<ICodeNode> ExprParser::parse_factor(const Token &current)
         if (tok.type() == &RIGHT_PAREN)
         {
             _scanner.next(); // consume the ')'
-        }
-    } else
+		}
+		else
+		{
+			ErrorHandler::flag(tok, &MISSING_RIGHT_PAREN, _mp);
+		}
+	}
+	else
     {
         ErrorHandler::flag(tok, &UNEXPECTED_TOKEN, _mp);
     }
