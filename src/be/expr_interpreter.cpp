@@ -105,80 +105,97 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
     // Arithmetic operators
     // ====================
     auto type = node.type();
-    if (ARITH_OPS.count(type))
-    {
-        if (integer_mode)
-        {
-            int value1 = boost::get<int>(operand_val1);
-            int value2 = boost::get<int>(operand_val2);
+	if (ARITH_OPS.count(type))
+	{
+		if (integer_mode)
+		{
+			int value1 = boost::get<int>(operand_val1);
+			int value2 = boost::get<int>(operand_val2);
 
-            // integer operations
-            // SHOULD RETURN AT EVERY IF
-            if (type == ICodeNodeType::ADD)      return value1 + value2;
-            if (type == ICodeNodeType::SUBTRACT) return value1 - value2;
-            if (type == ICodeNodeType::MULTIPLY) return value1 * value2;
-            if (type == ICodeNodeType::FLOAT_DIVIDE)
-            {
-                // check for division by zero:
-                if (value2 != 0)
-                {
-                    return (double)value1 / (double)value2;
-                } else
-                {
-                    RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
-                    return 0;
-                }
-            }
-            if (type == ICodeNodeType::INTEGER_DIVIDE)
-            {
-                // check for division by zero:
-                if (value2 != 0)
-                {
-                    return value1 / value2;
-                } else
-                {
-                    RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
-                    return 0;
-                }
-            }
-            if (type == ICodeNodeType::MOD)
-            {
-                // check for division by zero
-                if (value2 != 0)
-                {
-                    return value1 % value2;
-                } else
-                {
-                    RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
-                    return 0;
-                }
-            }
-        } else // double mode
-        {
-            double value1 = operand_val1.which() == 1 ? boost::get<int>(operand_val1) : boost::get<double>(operand_val1);
+			// integer operations
+			// SHOULD RETURN AT EVERY IF
+			if (type == ICodeNodeType::ADD)      return value1 + value2;
+			if (type == ICodeNodeType::SUBTRACT) return value1 - value2;
+			if (type == ICodeNodeType::MULTIPLY) return value1 * value2;
+			if (type == ICodeNodeType::FLOAT_DIVIDE)
+			{
+				// check for division by zero:
+				if (value2 != 0)
+				{
+					return (double) value1 / (double) value2;
+				}
+				else
+				{
+					RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
+					return 0;
+				}
+			}
+			if (type == ICodeNodeType::INTEGER_DIVIDE)
+			{
+				// check for division by zero:
+				if (value2 != 0)
+				{
+					return value1 / value2;
+				}
+				else
+				{
+					RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
+					return 0;
+				}
+			}
+			if (type == ICodeNodeType::MOD)
+			{
+				// check for division by zero
+				if (value2 != 0)
+				{
+					return value1 % value2;
+				}
+				else
+				{
+					RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
+					return 0;
+				}
+			}
+		}
+		else // double mode
+		{
+			double value1 = operand_val1.which() == 1 ? boost::get<int>(operand_val1) : boost::get<double>(operand_val1);
 			double value2 = operand_val2.which() == 1 ? boost::get<int>(operand_val2) : boost::get<double>(operand_val2);
 
-            // double operations
-            // SHOULD RETURN AT EVERY IF
-            switch (type)
-            {
-            case ICodeNodeType::ADD: return value1 + value2;
-            case ICodeNodeType::SUBTRACT: return value1 - value2;
-            case ICodeNodeType::MULTIPLY: return value1 * value2;
-            case ICodeNodeType::FLOAT_DIVIDE:
-            {
-                // check for division by zero:
-                if (value2 != 0.0)
-                {
-                    return value1 / value2;
-                } else
-                {
-                    RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
-                    return 0.0;
-                }
-            }
-            }
-        }
+			// double operations
+			// SHOULD RETURN AT EVERY IF
+			switch (type)
+			{
+			case ICodeNodeType::ADD: return value1 + value2;
+			case ICodeNodeType::SUBTRACT: return value1 - value2;
+			case ICodeNodeType::MULTIPLY: return value1 * value2;
+			case ICodeNodeType::FLOAT_DIVIDE:
+			{
+												// check for division by zero:
+												if (value2 != 0.0)
+												{
+													return value1 / value2;
+												}
+												else
+												{
+													RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
+													return 0.0;
+												}
+			}
+			}
+		}
+	} else if (node.type() == ICodeNodeType::AND || node.type() == ICodeNodeType::OR)
+	{
+		bool value1 = boost::get<bool>(operand_val1);
+		bool value2 = boost::get<bool>(operand_val2);
+
+		switch (node.type())
+		{
+		case ICodeNodeType::AND:
+			return value1 && value2;
+		case ICodeNodeType::OR:
+			return value1 || value2;
+		}
     } else if (integer_mode)
     {
         int value1 = boost::get<int>(operand_val1);
@@ -195,8 +212,8 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
         }
     } else
     {
-        double value1 = boost::get<double>(operand_val1);
-        double value2 = boost::get<double>(operand_val2);
+		double value1 = operand_val1.which() == 1 ? boost::get<int>(operand_val1) : boost::get<double>(operand_val1);
+		double value2 = operand_val2.which() == 1 ? boost::get<int>(operand_val2) : boost::get<double>(operand_val2);
 
         switch (type)
         {
