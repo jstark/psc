@@ -16,6 +16,8 @@ namespace
         ICodeNodeType::FLOAT_DIVIDE,
         ICodeNodeType::INTEGER_DIVIDE
     };
+
+
 }
 
 ExprVal ExprInterpreter::execute(const ICodeNode &node, int *exec_count)
@@ -97,7 +99,7 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
     auto operand_val1 = execute(*operand_node1, exec_count);
     auto operand_val2 = execute(*operand_node2, exec_count);
 
-    bool integer_mode = (operand_val1.which() == 0) && (operand_val2.which() == 0);
+    bool integer_mode = (operand_val1.which() == 1) && (operand_val2.which() == 1);
 
     // ====================
     // Arithmetic operators
@@ -153,8 +155,8 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
             }
         } else // double mode
         {
-            double value1 = boost::get<double>(operand_val1);
-            double value2 = boost::get<double>(operand_val2);
+            double value1 = operand_val1.which() == 1 ? boost::get<int>(operand_val1) : boost::get<double>(operand_val1);
+			double value2 = operand_val2.which() == 1 ? boost::get<int>(operand_val2) : boost::get<double>(operand_val2);
 
             // double operations
             // SHOULD RETURN AT EVERY IF
