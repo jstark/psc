@@ -31,7 +31,8 @@ namespace
 
 std::unique_ptr<ICodeNode> IfParser::parse(const Token &current)
 {
-    auto tok = current; // consume the IF token
+    auto tok = current; 
+	tok = _scanner.next(); // consume the IF token
 
     // create an IF node
     auto if_node = ICodeFactory::create_node(ICodeNodeType::IF);
@@ -55,7 +56,8 @@ std::unique_ptr<ICodeNode> IfParser::parse(const Token &current)
     // the IF node adopts the statement subtree as its second child.
     StatementParser stmnt_parser { _scanner, _symtabstack, _mp };
     if_node->add_child(stmnt_parser.parse(tok));
-
+	
+	tok = _scanner.current();
     // look for an ELSE token
     if (tok.type() == &ELSE)
     {
