@@ -107,7 +107,7 @@ struct ParseTreePrinter::ParseTreePrinterImpl
         
 		if (value.which() == 3)
 		{
-			auto entry = boost::get<const SymbolTableEntry *>(value);
+			auto entry = boost::get<SymbolTableEntry *>(value);
 			print_attribute("LEVEL", entry->symbol_table()->nesting_level());
 		}
     }
