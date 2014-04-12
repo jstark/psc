@@ -37,13 +37,13 @@ std::unique_ptr<ICodeNode> WhileParser::parse(const Token &current)
 	auto exit = ICodeFactory::create_node(ICodeNodeType::TEST);
 	auto notn = ICodeFactory::create_node(ICodeNodeType::NOT);
 
-	// the LOOP node adopts the TEST node as its first child.
-	// the TEST node adopts the NOT node as its only child.
-	loop->add_child(std::move(exit));
-	exit->add_child(std::move(notn));
-
 	ExprParser expr_parser{ _scanner, _symtabstack, _mp };
 	notn->add_child(expr_parser.parse(tok));
+
+	// the LOOP node adopts the TEST node as its first child.
+	// the TEST node adopts the NOT node as its only child.
+	exit->add_child(std::move(notn));
+	loop->add_child(std::move(exit));
 
 	// synchronize at the DO
 	tok = synchronize(DO_SET);
