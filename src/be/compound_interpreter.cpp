@@ -17,7 +17,6 @@ void* CompoundInterpreter::execute(const ICodeNode &node, int *exec_count)
 	for (const auto &child : node.children())
 	{
 		stmnt_interpreter.execute(*child, exec_count);
-		(*exec_count)++;
 	}
 	return nullptr;
 }

@@ -34,5 +34,6 @@ void* IfInterpreter::execute(const ICodeNode &node, int *exec_count)
         stmnt_intepreter.execute(*else_node, exec_count);
     }
 
+	++(*exec_count);
     return nullptr;
 }

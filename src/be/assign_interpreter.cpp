@@ -49,6 +49,6 @@ void* AssignInterpreter::execute(const ICodeNode &node, int *exec_count)
     entry->set_attribute(SymbolTableKey::DataValue, value);
 
     send_message(node, entry->name(), value, _mp);
-    (*exec_count)++;
+    ++(*exec_count);
     return nullptr;
 }
