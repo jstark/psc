@@ -30,7 +30,7 @@ ExprVal ExprInterpreter::execute(const ICodeNode &node, int *exec_count)
         // var_entry is a ICodeNodeAttrValue
         // and we must take the SymbolTableEntry from it.
         auto var_entry = opt_entry.get();
-        auto entry = boost::get<const SymbolTableEntry *>(var_entry);
+        auto entry = boost::get<SymbolTableEntry *>(var_entry);
         auto entry_val = entry->attribute(SymbolTableKey::DataValue);
         // we must convert var_entry to ExprVal
         return entry_val;

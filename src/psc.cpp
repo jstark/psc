@@ -287,7 +287,7 @@ int main(int argc, char *argv[])
             backend->process(std::move(icode), std::move(symtabstack));
         }
     } 
-    catch(...)
+    catch(std::exception &exc)
     {
         std::cout << visible << std::endl;
     }
