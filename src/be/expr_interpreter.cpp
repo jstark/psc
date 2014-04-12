@@ -171,16 +171,16 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
 			case ICodeNodeType::MULTIPLY: return value1 * value2;
 			case ICodeNodeType::FLOAT_DIVIDE:
 			{
-												// check for division by zero:
-												if (value2 != 0.0)
-												{
-													return value1 / value2;
-												}
-												else
-												{
-													RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
-													return 0.0;
-												}
+				// check for division by zero:
+				if (value2 != 0.0)
+				{
+					return value1 / value2;
+				}
+				else
+				{
+					RuntimeErrorHandler::flag(node, DIVISION_BY_ZERO, _mp);
+					return 0.0;
+				}
 			}
 			}
 		}

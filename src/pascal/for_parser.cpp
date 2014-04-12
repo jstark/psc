@@ -34,11 +34,6 @@ std::unique_ptr<ICodeNode> ForParser::parse(const Token &current)
 	// set the current line number 
 	init_assign_node->set_attribute(ICodeKey::LINE, tok.line_number());
 
-	// the COMPOUND node adopts the initial ASSIGN and the LOOP nodes
-	// as its first and second children.
-	compound->add_child(std::move(init_assign_node));
-	compound->add_child(std::move(loop));
-
 	// synchronize at the TO or DOWNTO
 	tok = synchronize(to_downto_set());
 	auto direction = tok.type();
@@ -69,7 +64,7 @@ std::unique_ptr<ICodeNode> ForParser::parse(const Token &current)
 	// the TEST node adopts the relational operator node as its only child.
 	// the LOOP node adopts the TEST node as its first child.
 	test->add_child(std::move(rel_op));
-	test->add_child(std::move(test));
+	loop->add_child(std::move(test));
 
 	// synchronize at the DO
 	tok = synchronize(do_set());
@@ -106,11 +101,15 @@ std::unique_ptr<ICodeNode> ForParser::parse(const Token &current)
 	// the next ASSIGN node adopts the arithmetic operator node as its 
 	// second child. The LOOP node adopts the next ASSIGN node as its third child.
 	next_assign->add_child(std::move(arith_node));
-	loop->add_child(std::move(next_assign));
-
 	// set the current line number attribute
 	next_assign->set_attribute(ICodeKey::LINE, target.line_number());
 
+	loop->add_child(std::move(next_assign));
+
+	// the COMPOUND node adopts the initial ASSIGN and the LOOP nodes
+	// as its first and second children.
+	compound->add_child(std::move(init_assign_node));
+	compound->add_child(std::move(loop));
 	return compound;
 }
 
