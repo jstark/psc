@@ -31,7 +31,8 @@ public:
 
 	std::unique_ptr<im::ICodeNode> parse(const fe::Token &current);
 private:
-	void parse_constant_list(const fe::Token &token, im::ICodeNode *constant, ConstantSet *cs);
+	std::unique_ptr<im::ICodeNode> parse_branch(const fe::Token &token, ConstantSet *cs);
+	void parse_constant_list(const fe::Token &token, im::ICodeNode &constant, ConstantSet *cs);
 	std::unique_ptr<im::ICodeNode> parse_constant(const fe::Token &tok, ConstantSet *cs);
 	std::unique_ptr<im::ICodeNode> parse_id_constant(const fe::Token &tok, const fe::TokenType *sign);
 	std::unique_ptr<im::ICodeNode> parse_int_constant(const std::string& value, const fe::TokenType *sign);

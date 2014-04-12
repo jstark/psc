@@ -24,7 +24,7 @@ namespace
 {
 	SynchronizationSet constant_start_set()
 	{
-		return { &IDENTIFIER, &INTEGER, &PLUS, &MINUS, &STRING };
+		return{ &IDENTIFIER, &INTEGER, &PLUS, &MINUS, &STRING };
 	}
 
 	SynchronizationSet of_set()
@@ -51,10 +51,97 @@ namespace
 
 unique_ptr<ICodeNode> CaseParser::parse(const Token &current)
 {
-	return nullptr;
+	auto tok = current;
+	tok = _scanner.next(); // consume the CASE token
+
+	// create a SELECT node
+	auto select = ICodeFactory::create_node(ICodeNodeType::SELECT);
+
+	// parse the CASE expression.
+	// the SELECT node adopts the expression subtree as its first child.
+	ExprParser expr_parser{ _scanner, _symtabstack, _mp };
+	select->add_child(expr_parser.parse(tok));
+
+	tok = _scanner.current();
+
+	// synchronize the OF token
+	static const auto OF_SET = of_set();
+	static const auto CONST_START_SET = constant_start_set();
+	tok = synchronize(OF_SET);
+	if (tok.type() == &OF)
+	{
+		tok = _scanner.next(); // consume the OF
+	}
+	else
+	{
+		ErrorHandler::flag(tok, &MISSING_OF, _mp);
+	}
+
+	// set of CASE branch constants.
+	ConstantSet cs;
+
+	// loop to parse each CASE branch until the END token
+	// or the end of the source file
+	while (!tok.is_eof() && tok.type() != &END)
+	{
+		// the SELECT node adopts the CASE branch subtree
+		select->add_child(parse_branch(tok, &cs));
+		tok = _scanner.current();
+		if (tok.type() == &SEMICOLON)
+		{
+			tok = _scanner.next(); // consume the ;
+		}
+		else if (CONST_START_SET.count(tok.type()))
+		{
+			ErrorHandler::flag(tok, &MISSING_SEMICOLON, _mp);
+		}
+	}
+
+	// look for the END token.
+	if (tok.type() == &END)
+	{
+		tok = _scanner.next(); // consume the END
+	}
+	else
+	{
+		ErrorHandler::flag(tok, &MISSING_END, _mp);
+	}
+	return select;
 }
 
-void CaseParser::parse_constant_list(const Token &token, ICodeNode *constant, ConstantSet *cs)
+unique_ptr<ICodeNode> CaseParser::parse_branch(const Token &token, ConstantSet *cs)
+{
+	auto tok = token;
+	// create a SELECT_BRANCH node and a SELECT_CONSTANTS node
+	// the SELECT_BRANCH adopts the SELECT_CONSTANTS node as its 
+	// first child.
+	auto branch = ICodeFactory::create_node(ICodeNodeType::SELECT_BRANCH);
+	auto constants = ICodeFactory::create_node(ICodeNodeType::SELECT_CONSTANTS);
+
+	// parse the list of CASE branch constants.
+	// the SELECT_CONSTANTS node adopts each constant.
+	parse_constant_list(tok, *constants, cs);
+	branch->add_child(std::move(branch));
+
+	// look for the : token
+	tok = _scanner.current();
+	if (tok.type() == &COLON)
+	{
+		tok = _scanner.next();
+	}
+	else
+	{
+		ErrorHandler::flag(tok, &MISSING_COLON, _mp);
+	}
+
+	// parse the CASE branch statement. The SELECT_BRANCH node adopts
+	// the statement subtree as its second child.
+	StatementParser stmnt_parser{ _scanner, _symtabstack, _mp };
+	branch->add_child(stmnt_parser.parse(tok));
+	return branch;
+}
+
+void CaseParser::parse_constant_list(const Token &token, ICodeNode &constant, ConstantSet *cs)
 {
 	// loop to parse each constant.
 	static const auto CONST_START_SET = constant_start_set();
@@ -64,7 +151,7 @@ void CaseParser::parse_constant_list(const Token &token, ICodeNode *constant, Co
 	while (CONST_START_SET.count(tok.type()))
 	{
 		// the constants list node adopts the constant node.
-		constant->add_child(parse_constant(tok, cs));
+		constant.add_child(parse_constant(tok, cs));
 
 		// synchronize at the comma between constants.
 		tok = synchronize(COMMA_SET);
@@ -108,7 +195,7 @@ unique_ptr<ICodeNode> CaseParser::parse_constant(const Token &token, ConstantSet
 	}
 	else if (type == &STRING)
 	{
-    auto value = tok.value();
+		auto value = tok.value();
 		constant = parse_char_constant(tok, boost::apply_visitor(utils::to_str_visitor(), value), sign);
 	}
 	else
