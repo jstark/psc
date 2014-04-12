@@ -6,6 +6,7 @@
 #include "be/common.h"
 #include "im/icode.h"
 #include "msg/message.h"
+#include <cassert>
 
 using namespace psc::im;
 using namespace psc::be;
@@ -60,7 +61,7 @@ namespace
         for ( ; begin != end; ++begin)
         {
             auto child = *begin;
-            if (search_constants(val, child))
+            if (search_constants(val, *child))
             {
                 return child;
             }
@@ -79,9 +80,19 @@ void* CaseInterpreter::execute(const ICodeNode &node, int *exec_count)
     ExprInterpreter expr_interpreter{_mp};
     auto value = expr_interpreter.execute(*expr_node, exec_count);
 
+	CaseConstant cc;
+	if (value.which() == 1)
+	{
+		cc = boost::get<int>(value);
+	}
+	else if (value.which() == 3)
+	{
+		cc = boost::get<std::string>(value);
+	}
+
     // attempt to select a SELECT_BRANCH
-    // TODO
-    ICodeNode *selected_branch = nullptr;
+	assert(children.size());
+	auto selected_branch = search_branches(cc, children.begin() + 1, children.end());
 
     // if the was a selection, execute the SELECT_BRANCH's statements
     if (selected_branch)
