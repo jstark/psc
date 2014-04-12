@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 #include "msg/message.h"
 #include "fe/source.h"
@@ -117,8 +118,8 @@ void ParserMessageListener::receive_msg(const msg::Message &message)
     }
 }
 
-static const char* INTERPRETER_SUMMARY_FORMAT = "\n%d statements executed \n%d runtime errors \n%8.2f seconds total execution time.";
-static const char* ASSIGN_FORMAT = ">>> LINE %d: %s = %s \n";
+//static const char* INTERPRETER_SUMMARY_FORMAT = "\n%d %20s \n%d %20s \n%8.2f %20s";
+static const char* ASSIGN_FORMAT = " >>> LINE %*d: %s = %s \n";
 
 class BackendMessageListener final: public msg::MessageListener
 {
@@ -126,7 +127,7 @@ public:
     void receive_msg(const msg::Message &message) override;
 
 private:
-    bool first_output{false};
+    bool first_output{true};
 };
 
 void BackendMessageListener::receive_msg(const msg::Message &message)
@@ -141,21 +142,23 @@ void BackendMessageListener::receive_msg(const msg::Message &message)
         auto item1 = boost::get<int>(args.at(0));
         auto item2 = boost::get<int>(args.at(1));
         auto item3 = boost::get<double>(args.at(2));
-        printf(INTERPRETER_SUMMARY_FORMAT, item1, item2, item3);
+		std::cout << std::endl << std::setw(20) << item1 << " statements executed"
+			      << std::endl << std::setw(20) << item2 << " runtime errors"
+			      << std::endl << std::setw(20) << std::fixed << std::setprecision(2) << item3 << " seconds total execution time.";
     }
         break;
     case msg::MessageType::Assign:
     {
         if (first_output)
         {
-            printf("\n===== OUTPUT ======\n");
+            printf("\n===== OUTPUT =====\n");
             first_output = false;
         }
 
         auto line_number = boost::get<int>(args.at(0));
         auto variable = boost::get<std::string>(args.at(1));
         auto value = boost::get<std::string>(args.at(2));
-        printf(ASSIGN_FORMAT, line_number, variable.c_str(), value.c_str());
+        printf(ASSIGN_FORMAT, 3, line_number, variable.c_str(), value.c_str());
     }
         break;
     case msg::MessageType::RuntimeError:

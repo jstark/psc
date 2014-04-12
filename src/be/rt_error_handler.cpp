@@ -12,7 +12,7 @@ namespace
 	bool no_line_attribute(const ICodeNode *node)
 	{
 		auto line = node->attribute(ICodeKey::LINE);
-		return line;
+		return !line;
 	}
 }
 
@@ -26,8 +26,10 @@ void RuntimeErrorHandler::flag(const ICodeNode &n, const RuntimeErrorCode &error
 		node = node->parent();
 	}
 
+	auto opt_line = node->attribute(ICodeKey::LINE);
+	auto var_line = opt_line.get();
 	// notify observers
-	Message msg(MessageType::RuntimeError, { error.text(), 0 });
+	Message msg(MessageType::RuntimeError, { error.text(), boost::get<int>(var_line) });
 	mp.send_msg(msg);
 
 	if (++_errors > MAX_ERRORS)
