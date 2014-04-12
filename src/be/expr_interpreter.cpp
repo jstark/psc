@@ -34,16 +34,22 @@ ExprVal ExprInterpreter::execute(const ICodeNode &node, int *exec_count)
         return entry_val;
     } else if (type == ICodeNodeType::INTEGER_CONSTANT)
     {
+		auto val_attr = node.attribute(ICodeKey::VALUE);
+		auto variant = val_attr.get();
         // return integer value;
-        return node.attribute(ICodeKey::VALUE);
+		return boost::get<int>(variant);
     } else if (type == ICodeNodeType::REAL_CONSTANT)
     {
+		auto val_attr = node.attribute(ICodeKey::VALUE);
+		auto variant = val_attr.get();
         // return the real value:
-        return node.attribute(ICodeKey::VALUE);
+        return boost::get<double>(variant);
     } else if (type == ICodeNodeType::STRING_CONSTANT)
     {
+		auto val_attr = node.attribute(ICodeKey::VALUE);
+		auto variant = val_attr.get();
         // return the string value:
-        return node.attribute(ICodeKey::VALUE);
+		return boost::get<std::string>(variant);
     } else if (type == ICodeNodeType::NEGATE)
     {
         // get the NEGATE node's expression node child
