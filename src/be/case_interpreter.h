@@ -11,7 +11,7 @@ FWD_DECL_NS_NS_CL(psc, im, ICodeNode)
 namespace psc {
 namespace be {
 
-using CaseConstant = boost::variant<int, std::string>;
+using CaseConstant = boost::variant<int, std::string, void *>;
 
 class CaseInterpreter final
 {

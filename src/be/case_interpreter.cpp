@@ -37,7 +37,8 @@ namespace
                     return true;
                 }
             }
-        } else
+		}
+		else if (val.which() == 1)
         {
             std::string v = boost::get<std::string>(val);
             for (auto constant : all_constants)
@@ -80,7 +81,7 @@ void* CaseInterpreter::execute(const ICodeNode &node, int *exec_count)
     ExprInterpreter expr_interpreter{_mp};
     auto value = expr_interpreter.execute(*expr_node, exec_count);
 
-	CaseConstant cc;
+	CaseConstant cc = nullptr;
 	if (value.which() == 1)
 	{
 		cc = boost::get<int>(value);
