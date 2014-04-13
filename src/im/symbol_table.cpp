@@ -156,7 +156,12 @@ void SymbolTableEntry::set_attribute(SymbolTableKey key, SymbolTableKeyValue val
 
 SymbolTableKeyValue SymbolTableEntry::attribute(SymbolTableKey key) const
 {
-	return pimpl->attributes[key];
+	auto attr = pimpl->attributes.find(key);
+	if (attr != pimpl->attributes.end())
+	{
+		return attr->second;
+	}
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
