@@ -270,27 +270,29 @@ int main(int argc, char *argv[])
 
             // do work
             std::tie(icode, symtabstack) = parser.parse();
-			if (xref)
+			if (parser.error_count() == 0)
 			{
-				im::CrossReferencer xr;
-				xr.print(symtabstack.get());
-			}
-            
-            if (ast)
-            {
-                im::ParseTreePrinter printer(std::cout);
-                printer.print(icode.get());
-            }
+				if (xref)
+				{
+					im::CrossReferencer xr;
+					xr.print(symtabstack.get());
+				}
 
-            BackendMessageListener bml;
-            psc::msg::MessageProducer bmp;
-            bmp.add(&bml);
-			//bmp.add(&sml);
-            auto backend = be::Backend::create("intepret", bmp);
-            backend->process(std::move(icode), std::move(symtabstack));
+				if (ast)
+				{
+					im::ParseTreePrinter printer(std::cout);
+					printer.print(icode.get());
+				}
+
+				BackendMessageListener bml;
+				psc::msg::MessageProducer bmp;
+				bmp.add(&bml);
+				auto backend = be::Backend::create("intepret", bmp);
+				backend->process(std::move(icode), std::move(symtabstack));
+			}
         }
     } 
-    catch(std::exception &exc)
+    catch(...)
     {
         std::cout << visible << std::endl;
     }
