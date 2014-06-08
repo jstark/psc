@@ -182,6 +182,9 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
 					return 0.0;
 				}
 			}
+                break;
+            default:
+                std::abort();
 			}
 		}
 	} else if (node.type() == ICodeNodeType::AND || node.type() == ICodeNodeType::OR)
@@ -195,6 +198,8 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
 			return value1 && value2;
 		case ICodeNodeType::OR:
 			return value1 || value2;
+        default:
+            std::abort();
 		}
     } else if (integer_mode)
     {
@@ -209,6 +214,7 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
         case ICodeNodeType::LE: return value1 <= value2;
         case ICodeNodeType::GT: return value1 >  value2;
         case ICodeNodeType::GE: return value1 >= value2;
+        default: std::abort();
         }
     } else
     {
@@ -223,6 +229,8 @@ ExprVal ExprInterpreter::execute_binop(const ICodeNode &node, int *exec_count)
         case ICodeNodeType::LE: return value1 <= value2;
         case ICodeNodeType::GT: return value1 >  value2;
         case ICodeNodeType::GE: return value1 >= value2;
+        default:
+            std::abort();
         }
     }
     return 0; // should never get here.
